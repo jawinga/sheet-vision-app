@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+$dark-blue: #022b3a;
+$medium-blue: #1f7a8c;
+$light-blue: #bfdbf7;
+$gray-bluish: #e1e5f2;
+$white: #ffffff;
+
+mat-toolbar {
+  background-color: $dark-blue;
+  color: $white;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+}
+
+.app-icon {
+  margin-right: 16px;
+  width: 24px;
+  height: 24px;
+}
+
+.my-icon {
+  margin-right: 8px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+button {
+  margin-left: 16px;
+}
