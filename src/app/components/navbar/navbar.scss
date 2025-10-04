@@ -1,16 +1,21 @@
-:host {
-  display: block;
-}
-
-$dark-blue: #022b3a;
-$medium-blue: #1f7a8c;
-$light-blue: #bfdbf7;
-$gray-bluish: #e1e5f2;
-$white: #ffffff;
-
-mat-toolbar {
-  background-color: $dark-blue;
-  color: $white;
+@use "../../../styles/variables" as *;
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  z-index: 1000;
+  background-color: $color-dark;
+  color: $color-light;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: ($color-dark, 5%) &__left-section {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .left-section {

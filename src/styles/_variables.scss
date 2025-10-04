@@ -1,6 +1,24 @@
-//gentle sea breeze template
-$dark-blue: #022b3a;
-$medium-blue: #1f7a8c;
-$light-blue: #bfdbf7;
-$gray-bluish: #e1e5f2;
-$white: #ffffff;
+// src/styles/_variables.scss
+
+// Base palette
+$color-dark: #2b2d42;
+$color-muted: #8d99ae;
+$color-light: #edf2f4;
+
+$color-red-bright: #ef233c;
+$color-red-dark: #d80032;
+
+// Theme: Light
+$light-background: $color-light;
+$light-text: $color-dark;
+
+// Theme: Dark
+$dark-background: $color-dark;
+$dark-text: $color-light;
+
+// Semantic tokens (current theme = dark mode)
+$background-color: $dark-background;
+$text-color: $dark-text;
+$border-color: $color-muted;
+$primary-action: $color-red-bright;
+$error-color: $color-red-dark;

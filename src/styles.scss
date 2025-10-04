@@ -1,1 +1,6 @@
-@import "styles/variables";
+@use "styles/variables" as *;
+
+body {
+  background-color: $dark-background;
+  font-family: "TikTok Sans", sans-serif;
+}
