@@ -6,37 +6,42 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
-
-  // use your accent color
-  background-color: $color-red-dark;
-  color: $color-light;
-  font-weight: 600;
-  font-size: 1rem;
-
   border: none;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1;
+  background-color: $color-accent; // primary action color
+  color: $color-text-primary; // button text color
   transition: background-color 0.2s ease, transform 0.1s ease;
-  margin-right: 2.5rem;
+
+  // (tip) spacing belongs to the parent layout; avoid hard-coded margins on buttons
+  // remove if you can control spacing from the container
+  // margin-right: 2.5rem;
 
   &:hover {
-    background-color: darken($color-red-dark, 5%);
-
-    .my-icon {
-      background-color: darken($light-text, 5%);
-    }
+    background-color: darken($color-accent, 5%);
   }
 
   &:active {
     transform: scale(0.97);
   }
 
+  &:focus-visible {
+    outline: 2px solid lighten($color-accent, 15%);
+    outline-offset: 2px;
+  }
+
   .my-icon {
     display: flex;
     align-items: center;
     justify-content: center;
+
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background-color: $light-text;
+
+    background-color: $color-text-primary; // circle behind the icon
+    color: $color-bg-dark; // <-- sets SVG stroke via currentColor
   }
 }

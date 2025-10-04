@@ -1,4 +1,4 @@
-<button class="cta-btn">
+<button class="cta-btn" [ngClass]="'color-' + color">
   <lucide-icon [img]="iconImg" class="my-icon"></lucide-icon>
   {{ label }}
 </button>
