@@ -16,6 +16,7 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-right: 2.5rem;
 
   &:hover {
     background-color: darken($color-red-dark, 5%);
@@ -30,9 +31,11 @@
   }
 
   .my-icon {
-    width: 20px;
-    height: 20px;
-    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background-color: $light-text;
   }

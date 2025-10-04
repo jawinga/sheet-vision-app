@@ -5,7 +5,7 @@ import { MatIconButton } from '@angular/material/button'; // For icon button, bu
 import { RouterModule } from '@angular/router';
 import { Cta } from '../cta/cta';
 import { LucideAngularModule, User } from 'lucide-angular';
-import { Icon } from '../icon/icon';
+import { IconEyeComponent } from '../../icon/icon';
 
 @Component({
   selector: 'app-navbar',
@@ -15,8 +15,8 @@ import { Icon } from '../icon/icon';
     MatButtonModule,
     MatToolbarModule,
     RouterModule,
+    IconEyeComponent,
     Cta,
-    Icon,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
