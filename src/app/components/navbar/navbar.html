@@ -5,7 +5,14 @@
       variant="plain"
       style="color: #edf2f4"
     ></app-icon-eye>
-    <button mat-button routerLink="/insights">Your Insights</button>
+    <button mat-button routerLink="/insights">
+      <lucide-icon
+        [img]="FolderSearch"
+        class="my-icon"
+        class="button-insights"
+      ></lucide-icon>
+      Your Insights
+    </button>
   </div>
   <span class="spacer"></span>
   <div class="nav-bar__left-section">

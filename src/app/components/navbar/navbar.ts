@@ -4,8 +4,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button'; // For icon button, but since it's module, already in MatButtonModule
 import { RouterModule } from '@angular/router';
 import { Cta } from '../cta/cta';
-import { LucideAngularModule, User } from 'lucide-angular';
-import { IconEyeComponent } from '../../icon/icon';
+import { LucideAngularModule, User, FolderSearch } from 'lucide-angular';
+import { IconEyeComponent } from '../icon/icon';
 
 @Component({
   selector: 'app-navbar',
@@ -23,6 +23,7 @@ import { IconEyeComponent } from '../../icon/icon';
 })
 export class NavbarComponent {
   readonly User = User;
+  readonly FolderSearch = FolderSearch;
 
   appIcon: string = 'eye'; // Placeholder for app icon (e.g., 'eye' for vision theme; replace with actual Lucide icon name or path)
   ctaIcon: string = 'plus'; // Placeholder for CTA icon (e.g., 'plus' for create new; replace as needed)
