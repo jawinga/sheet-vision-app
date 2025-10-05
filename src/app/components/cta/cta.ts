@@ -15,11 +15,11 @@ type ColorVariant = 'accent' | 'accent-hover';
 })
 export class Cta {
   @Input() label = '';
-  @Input() icon: IconVariant = 'plus';
+  @Input() icon?: IconVariant;
   @Input() color: ColorVariant = 'accent';
 
   private readonly IconMap = { plus: Plus, trash: Trash2 };
   get iconImg() {
-    return this.IconMap[this.icon];
+    return this.icon ? this.IconMap[this.icon] : undefined;
   }
 }

@@ -1,4 +1,9 @@
 <button class="cta-btn" [ngClass]="'color-' + color">
+  @if(iconImg){
+
   <lucide-icon [img]="iconImg" class="my-icon"></lucide-icon>
+
+  }
+
   {{ label }}
 </button>

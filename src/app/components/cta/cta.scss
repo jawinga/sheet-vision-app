@@ -11,37 +11,42 @@
   font-weight: 600;
   font-size: 1rem;
   line-height: 1;
-  background-color: $color-accent; // primary action color
-  color: $color-text-primary; // button text color
   transition: background-color 0.2s ease, transform 0.1s ease;
-
-  // (tip) spacing belongs to the parent layout; avoid hard-coded margins on buttons
-  // remove if you can control spacing from the container
-  // margin-right: 2.5rem;
-
-  &:hover {
-    background-color: darken($color-accent, 5%);
-  }
 
   &:active {
     transform: scale(0.97);
   }
-
   &:focus-visible {
     outline: 2px solid lighten($color-accent, 15%);
     outline-offset: 2px;
+  }
+
+  &.color-accent {
+    background-color: $color-accent;
+    color: $color-text-primary;
+
+    &:hover {
+      background-color: darken($color: $color-accent, $amount: 10%);
+    }
+  }
+
+  &.color-accent-hover {
+    background-color: $color-accent-hover;
+    color: $color-text-primary;
+
+    &:hover {
+      background-color: darken($color: $color-accent-hover, $amount: 10%);
+    }
   }
 
   .my-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 32px;
     height: 32px;
     border-radius: 50%;
-
-    background-color: $color-text-primary; // circle behind the icon
-    color: $color-bg-dark; // <-- sets SVG stroke via currentColor
+    background-color: $color-text-primary;
+    color: $color-bg-dark;
   }
 }

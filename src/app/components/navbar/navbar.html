@@ -1,26 +1,35 @@
 <mat-toolbar class="nav-bar">
   <div class="nav-bar__left-section">
-    <app-icon-eye
-      [size]="20"
-      variant="plain"
-      style="color: #edf2f4"
-    ></app-icon-eye>
+    <lucide-icon [img]="Logo"></lucide-icon>
     <h3>Data Insights</h3>
-    <button mat-button routerLink="/insights">
-      <lucide-icon
-        [img]="FolderSearch"
-        class="my-icon"
-        class="button-insights"
-      ></lucide-icon>
-      Your Insights
-    </button>
   </div>
   <span class="spacer"></span>
-  <div class="nav-bar__left-section">
-    <app-cta label="Upload File" icon="plus" colorVariant="accent"></app-cta>
+  <div class="nav-bar__right-section">
+    <a routerLink="/insights" class="nav-bar__insights-button">
+      <lucide-icon
+        [img]="FolderSearch"
+        class="nav-bar__icon nav-bar__icon--insights"
+      ></lucide-icon>
+      Your Insights
+    </a>
 
-    <button mat-icon-button aria-label="Profile">
-      <lucide-icon [img]="User" class="my-icon"></lucide-icon>
+    <!-- CTA is its own block -->
+    <app-cta
+      label="Upload File"
+      icon="plus"
+      color="accent"
+      class="nav-bar__upload"
+    ></app-cta>
+
+    <button
+      mat-icon-button
+      aria-label="Profile"
+      class="nav-bar__profile-button"
+    >
+      <lucide-icon
+        [img]="User"
+        class="nav-bar__icon nav-bar__icon--profile"
+      ></lucide-icon>
     </button>
   </div>
 </mat-toolbar>
