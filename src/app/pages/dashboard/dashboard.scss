@@ -1,3 +1,24 @@
+@use "../../../styles/variables" as *;
+
+.dashboard-title {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 3rem;
+
+  h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: $color-text-primary;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: $color-text-muted;
+  }
+}
+
 h3 {
   display: flex;
   flex-direction: row;

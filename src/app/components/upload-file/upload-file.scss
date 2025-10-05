@@ -1,6 +1,7 @@
 @use "../../../styles/variables" as *;
 
 div {
+  box-sizing: border-box;
   padding: 5rem;
   display: flex;
   flex-direction: column;
@@ -8,6 +9,8 @@ div {
   border: 4px dashed $color-accent-hover;
   border-radius: 8px;
   background-color: $color-bg-card;
+  width: min(70%, 920px);
+  margin: 0 auto;
 }
 
 .first-text {
