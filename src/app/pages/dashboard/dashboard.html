@@ -1,1 +1,10 @@
 <app-upload-file></app-upload-file>
+<h3>Choose your Chart Style</h3>
+
+<div class="charts-list">
+  @for (chart of chartVariants; track $index) {
+
+  <app-chart-type [icon]="chart.icon" [chartName]="chart.name"></app-chart-type>
+
+  }
+</div>
