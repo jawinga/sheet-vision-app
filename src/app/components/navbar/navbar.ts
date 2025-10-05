@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconButton } from '@angular/material/button'; // For icon button, but since it's module, already in MatButtonModule
 import { RouterModule } from '@angular/router';
 import { Cta } from '../cta/cta';
 import {
@@ -19,6 +18,7 @@ import {
     MatButtonModule,
     MatToolbarModule,
     RouterModule,
+
     Cta,
   ],
   templateUrl: './navbar.html',

@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { LucideAngularModule, Plus, Trash2 } from 'lucide-angular';
+import { LucideAngularModule, Plus, Trash2, CloudUpload } from 'lucide-angular';
 
-type IconVariant = 'plus' | 'trash';
+type IconVariant = 'plus' | 'trash' | 'upload';
 type ColorVariant = 'accent' | 'accent-hover';
 
 @Component({
@@ -18,7 +18,7 @@ export class Cta {
   @Input() icon?: IconVariant;
   @Input() color: ColorVariant = 'accent';
 
-  private readonly IconMap = { plus: Plus, trash: Trash2 };
+  private readonly IconMap = { plus: Plus, trash: Trash2, upload: CloudUpload };
   get iconImg() {
     return this.icon ? this.IconMap[this.icon] : undefined;
   }

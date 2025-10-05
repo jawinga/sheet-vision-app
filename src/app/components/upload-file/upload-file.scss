@@ -1,0 +1,24 @@
+@use "../../../styles/variables" as *;
+
+div {
+  padding: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 4px dashed $color-accent-hover;
+  border-radius: 8px;
+}
+
+.first-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-top: 1rem;
+}
+
+.second-text {
+  font-size: 1rem;
+  color: $color-text-muted;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
