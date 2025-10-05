@@ -14,6 +14,7 @@ type IconVariant = 'chart1' | 'chart2' | 'chart3' | 'chart4' | 'chart5';
   selector: 'app-chart-type',
   imports: [LucideAngularModule],
   templateUrl: './chart-type.html',
+  standalone: true,
   styleUrl: './chart-type.scss',
 })
 export class ChartType {

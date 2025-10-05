@@ -1,15 +1,19 @@
 import { Component } from '@angular/core';
 import { UploadFile } from '../../components/upload-file/upload-file';
 import { ChartType } from '../../components/chart-type/chart-type';
+import { LucideAngularModule, Sparkles } from 'lucide-angular';
+import { AIGeneration } from '../../components/aigeneration/aigeneration';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [UploadFile, ChartType],
+  imports: [UploadFile, ChartType, LucideAngularModule, AIGeneration],
   standalone: true,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
+  readonly Sparkles = Sparkles;
+
   chartVariants = [
     { icon: 'chart1', name: 'Bar Chart' },
     { icon: 'chart2', name: 'Scatter Plot' },

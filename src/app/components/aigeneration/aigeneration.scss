@@ -1,0 +1,44 @@
+@use "../../../styles/variables" as *;
+
+:host {
+  display: block;
+  min-height: 200px;
+  padding-top: 96px; // to avoid navbar overlap
+}
+
+div {
+  padding: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 4px solid $color-accent-hover;
+  border-radius: 8px;
+  background-color: $color-bg-card;
+}
+
+.not-generated {
+  font-size: 1rem;
+  color: $color-text-muted;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* component SCSS */
+.spinner-wrap {
+  /* if you have a fixed navbar, keep content below it */
+  padding-top: 96px; /* adjust to your toolbar height */
+  min-height: 200px;
+  display: grid;
+  place-items: center;
+  /* debug background so you can see contrast while testing */
+  background: #2b1111; /* your $color-bg-card */
+  z-index: 1; /* be above low z-index layers */
+}
+
+/* Force the spinner colors explicitly */
+.ai-spinner {
+  /* active stroke color */
+  --mdc-circular-progress-active-indicator-color: #ed1313; /* $color-accent */
+  /* track stroke color */
+  --mdc-circular-progress-track-color: rgba(255, 255, 255, 0.2);
+}

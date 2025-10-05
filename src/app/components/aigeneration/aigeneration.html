@@ -1,0 +1,9 @@
+<div>
+  @if (!generated) {
+  <p class="not-generated">
+    AI Insights will appear here after processing your data
+  </p>
+  } @if (generated) { } @if (generating){
+  <app-loading-animation></app-loading-animation>
+  }
+</div>
