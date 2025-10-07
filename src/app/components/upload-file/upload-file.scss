@@ -26,3 +26,14 @@ div {
   margin-top: 0.5rem;
   margin-bottom: 1.5rem;
 }
+
+.dragover{
+  background-color: lighten($color-bg-card, 7%);
+}
+
+.file-info{
+  display: flex;
+  gap: 1rem;
+  flex-direction: row;
+  
+}

@@ -1,11 +1,19 @@
-<div class="upload-box">
-  <lucide-icon
+<div class="upload-box" [class.dragover]="isDragOver" (dragover)="onDragOver($event)" (drop)="onDrop($event)" (dragleave)="onDragLeave($event)">
+  
+  @if (uploadState === 'idle') {
+
+      <lucide-icon
     [img]="CloudUpload"
     [size]="45"
     [color]="'#ed1313'"
   ></lucide-icon>
   <p class="first-text">Drag and Drop your Excel file here</p>
   <p class="second-text">or click to browse your files</p>
+
+
+  }
+  
+
 
   @if (uploadState === 'idle') {
     <input type="file" hidden (change)="onFileSelect($event)" #fileInput>
@@ -15,7 +23,7 @@
   @if (uploadState === 'uploading') {
     <p class="uploading-text">Uploading...</p>
     <div class="loader">
-      <mat-progress-spinner mode="indeterminate" diameter="32" strokeWidth="4"></mat-progress-spinner>
+      <app-loading-animation></app-loading-animation>
     </div>
   }
 
@@ -23,9 +31,16 @@
 
     <div class="file">
       <section class="file-info">
-        <span>Name: {{name}}</span>
-        <span>Type: {{type}}</span>
-        <span>Size: {{formatFileSize(size)}}</span>
+
+        <lucide-icon [img]="Retry" [color]="'#ed1313'"(click)="window.location.reload()">Retry upload</lucide-icon>
+
+
+        @if (selectedFile) {
+                  <span>Name: {{getFileNameWithoutExtension(selectedFile)}}</span>
+                  <span>Type: {{getFileTypeWithoutName(selectedFile)}}</span>
+        }
+        <span>Size: {{ formatFileSize(selectedFile?.size || 0) }}</span>
+
       </section>  
     </div>
   }
@@ -33,6 +48,7 @@
   @if (uploadState === 'error') {
 
     <p class="error-text">There was an error uploading the file. Please try again.</p>
+    <lucide-icon [img]="Retry" [color]="'#ed1313'"(click)="window.location.reload()">Retry upload</lucide-icon>
 
   }
 
