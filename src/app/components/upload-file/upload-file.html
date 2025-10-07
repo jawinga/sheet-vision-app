@@ -6,5 +6,36 @@
   ></lucide-icon>
   <p class="first-text">Drag and Drop your Excel file here</p>
   <p class="second-text">or click to browse your files</p>
-  <app-cta color="accent-hover" label="Upload File"></app-cta>
+
+  @if (uploadState === 'idle') {
+    <input type="file" hidden (change)="onFileSelect($event)" #fileInput>
+    <app-cta color="accent-hover" label="Upload File" (click)="fileInput.click()"></app-cta>
+  }
+
+  @if (uploadState === 'uploading') {
+    <p class="uploading-text">Uploading...</p>
+    <div class="loader">
+      <mat-progress-spinner mode="indeterminate" diameter="32" strokeWidth="4"></mat-progress-spinner>
+    </div>
+  }
+
+  @if(uploadState === 'success') {
+
+    <div class="file">
+      <section class="file-info">
+        <span>Name: {{name}}</span>
+        <span>Type: {{type}}</span>
+        <span>Size: {{formatFileSize(size)}}</span>
+      </section>  
+    </div>
+  }
+
+  @if (uploadState === 'error') {
+
+    <p class="error-text">There was an error uploading the file. Please try again.</p>
+
+  }
+
+
+
 </div>
