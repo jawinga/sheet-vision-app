@@ -1,7 +1,26 @@
 @use "styles/variables" as *;
 
 body {
-  background-color: $color-bg-card;
+  background-color: $color-bg-dark;
   font-family: "Manrope", sans-serif;
   color: $color-text-primary;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+app-content {
+  padding-top: 10rem;
+  padding-bottom: 10rem;
+  padding-left: $spacing-lg;
+  padding-right: $spacing-lg;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    padding-left: $spacing-md;
+    padding-right: $spacing-md;
+    padding-top: 8rem;
+  }
 }

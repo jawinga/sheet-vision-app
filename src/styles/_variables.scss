@@ -10,3 +10,31 @@ $color-text-muted: #b8b8b8;
 // Accent
 $color-accent: #ed1313;
 $color-accent-hover: #651011;
+
+// Elevation & Depth
+$color-bg-elevated: #331515;
+$color-shadow: rgba(0, 0, 0, 0.3);
+$color-shadow-lg: rgba(0, 0, 0, 0.5);
+
+// Interactive States
+$color-accent-light: #ff2a2a;
+$color-success: #10b981;
+$color-error: #ef4444;
+
+// Spacing Scale
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+$spacing-2xl: 4rem;
+
+// Border Radius
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-base: 0.3s ease;
+$transition-slow: 0.4s ease;
