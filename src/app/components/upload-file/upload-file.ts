@@ -4,8 +4,10 @@ import { Cta } from '../cta/cta';
 import { CommonModule } from '@angular/common';
 import {ProgressSpinnerMode, MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSliderModule} from '@angular/material/slider';
-import { FileService } from '../../services/file-service';
+import { FileService } from '../../services/file/file-service';
 import { LoadingAnimation } from "../loading-animation/loading-animation";
+import { FileValidationService } from '../../services/validation/file-validation-service';
+
 @Component({
   selector: 'app-upload-file',
   standalone: true,
@@ -15,7 +17,7 @@ import { LoadingAnimation } from "../loading-animation/loading-animation";
 })
 export class UploadFile {
 
-  constructor(private fileService: FileService) {}
+  constructor(private fileService: FileService, private fileValidationService:FileValidationService) {}
 
   name?: string;
   type?: string;
@@ -30,20 +32,19 @@ export class UploadFile {
 
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0] || null;
-    if(!file) return;
-    const allowed = [
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/vnd.ms-excel',
-      'text/csv'
-    ];
 
-    if (file.type && !allowed.includes(file.type)) {
-        this.uploadState = 'error';
-          return;
+    const resultValid = this.fileValidationService.validate(file);
+
+    if(!file){
+      this.uploadState = 'error';
+      return;
     }
 
-    this.name = this.getFileNameWithoutExtension(file) || 'No title file found';
-    this.type = file.type || 'Unknown';
+    if(!resultValid){
+      this.uploadState = 'error';
+      return
+
+    }
 
     this.selectedFile = file;
     this.startUpload(file);
