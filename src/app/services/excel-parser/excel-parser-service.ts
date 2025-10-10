@@ -1,13 +1,160 @@
 import { Injectable } from '@angular/core';
-import { read, utils } from 'xlsx';
+import * as XLSX from 'xlsx';
+
+export interface ParseOptions{
+  sheetName?:string; //default first
+  headerRowIndex?: number;
+  sampleLimit?: number;
+  maxRows?:number;
+  headerDepth?:number;
+}
+
+export interface ParseResult{
+
+  sheetName: string;
+  columns: string[];
+  rowCount: number;
+  rows: Array<Record<string, unknown>>;   
+  sampleRows: Array<Record<string, unknown>>;
+  warnings: string[];   
+  
+}
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class ExcelParserService {
-
-
+export class ExcelParserService  {
 
   
+  async parseExcel(file:File, opts: ParseOptions = {}): Promise<ParseResult>{
+   
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, {type: 'array', cellDates: true});
+
+    const sheetName = opts.sheetName ?? wb.SheetNames[0];
+    const ws = wb.Sheets[sheetName];
+    if(!ws) throw new Error(`Sheet ${sheetName} not found`);
+
+    const aoa: any[][] = XLSX.utils.sheet_to_json(ws, {
+      header: 1,          
+      raw: true,
+      defval: null,
+      blankrows: false
+    }) as any[][];
+
+    const headerRowIndex = typeof opts.headerRowIndex === 'number' ? opts.headerRowIndex : this.findFirstNonEmptyRow(aoa);
+
+    const rawHeaderRow = Array.isArray(aoa[headerRowIndex]) ? aoa[headerRowIndex] : [];
+    const rawHeaders = rawHeaderRow.map(c => (c ?? '').toString().trim());
+    const { headers, warnings } = this.cleanAndUniqHeaders(rawHeaders);
+
+    let dataAoA = aoa.slice(headerRowIndex + 1).filter((r)=> Array.isArray(r) && r.some(cell=>this.hasValue(cell)));
+
+    if(typeof opts.maxRows === 'number' && opts.maxRows > 0){
+      dataAoA = dataAoA.slice(0, opts.maxRows);
+    }
+
+
+    const rows = dataAoA.map((r)=>{
+
+      const obj: Record<string, unknown> = {};
+      headers.forEach((h, i)=>{
+        obj[h] = this.normalizeCell(r[i]);
+      });
+      return obj;
+    })
+
+    const sampleLimit = opts.sampleLimit ?? 10;
+    return {
+
+      sheetName,
+      columns: headers,
+      rowCount: rows.length,
+      rows,
+      sampleRows: rows.slice(0, sampleLimit),
+      warnings
+
+    };
+
+  }
+
+
+
+
+  //helpers
+
+  private findFirstNonEmptyRow(aoa: any[][]):number{
+
+    const index = aoa.findIndex(r=>Array.isArray(r) && r.some(c=>this.hasValue(c)));
+    return index >= 0 ? index : 0;
+
+  }
+
+  private hasValue(v:unknown):boolean{
+
+    if(v === null || v === undefined) return false;
+    if(typeof v === 'string') return v.trim().length > 0;
+    return true
+
+  }
+
+  private normalizeCell(v:unknown){
+
+    if(v === '' || v === undefined) return null;
+
+    if(v instanceof Date) return v.toISOString();
+
+    return v;
+
+  }
+
+  private cleanAndUniqHeaders(raw:string[]){
+
+    const seen = new Map<string, number>();
+    const warnings: string[] = [];
+
+    const headers = raw.map((h, i)=>{
+
+
+      let cleanup = h
+        .replace(/\r?\n/g, ' ')
+        .trim()
+        .replace(/\s+/g, '_')
+        .replace(/[^\w]/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .toLowerCase();
+
+
+      if (!cleanup) {
+      cleanup = `col_${i + 1}`; // fallback for empty headers
+      warnings.push(`Empty header at column ${i + 1} renamed to "${cleanup}"`);
+    }
+
+      if(seen.has(cleanup)){
+
+        const count = (seen.get(cleanup) ?? 1) + 1;
+        seen.set(cleanup, count);
+
+        const alt = `${cleanup}_${count}`;
+
+        warnings.push(`Duplicate header "${h}" renamed to "${alt}"`);
+
+        return alt;
+
+      }else{
+
+        seen.set(cleanup, 1);
+        return cleanup;
+
+      }
+
+    });
+
+    return {headers, warnings};
+
+  }
+  
 }
+
+//helpers
