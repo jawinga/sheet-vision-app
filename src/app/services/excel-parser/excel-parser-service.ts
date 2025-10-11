@@ -84,7 +84,7 @@ export class ExcelParserService  {
 
   //helpers
 
-  private findFirstNonEmptyRow(aoa: any[][]):number{
+  export findFirstNonEmptyRow(aoa: any[][]):number{
 
     const index = aoa.findIndex(r=>Array.isArray(r) && r.some(c=>this.hasValue(c)));
     return index >= 0 ? index : 0;
@@ -104,6 +104,14 @@ export class ExcelParserService  {
     if(v === '' || v === undefined) return null;
 
     if(v instanceof Date) return v.toISOString();
+
+    if (typeof v === 'number' && !isFinite(v)) {
+      return null;
+    }
+
+    if(typeof v === 'number' && isNaN(v)){
+      return null;
+    }
 
     return v;
 
@@ -154,7 +162,16 @@ export class ExcelParserService  {
     return {headers, warnings};
 
   }
-  
+
+  private mergeData<T>(rawData: (T | null)[]): T[] {
+  let lastValue: T | null = null;
+
+  return rawData.map(value => {
+    if (value !== null && value !== undefined) {
+      lastValue = value;
+    }
+    return lastValue as T;
+  });
+}
 }
 
-//helpers
