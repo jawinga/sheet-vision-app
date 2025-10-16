@@ -84,7 +84,7 @@ export class ExcelParserService  {
 
   //helpers
 
-  export findFirstNonEmptyRow(aoa: any[][]):number{
+  private findFirstNonEmptyRow(aoa: any[][]):number{
 
     const index = aoa.findIndex(r=>Array.isArray(r) && r.some(c=>this.hasValue(c)));
     return index >= 0 ? index : 0;

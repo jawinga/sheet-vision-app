@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 
 
 export interface HeaderDetectOptions {
@@ -30,6 +31,16 @@ export interface HeaderDetectDiagnostics {
   depthFromHeuristic?: number;
   mergesConsidered?: boolean;
   warnings?: string[];
+}
+
+export interface PreliminaryHeaderDetectDiagnosis{
+
+  empty: boolean;
+  numberish: boolean;
+  dateish:boolean;
+  shortLabel:boolean;
+  longLabel: boolean;
+
 }
 
 export type HeaderDetectReason =
@@ -110,7 +121,6 @@ export class HeaderDepth {
   }
   }
 
-    // (c) Too narrow (not enough non-empty columns in that first meaningful row)
   const firstRow = Array.isArray(rawAoA[startRow]) ? rawAoA[startRow] : [];
   const nonEmptyCols = this.countNonEmpty(firstRow);
   if (nonEmptyCols < cfg.minCols) {
@@ -141,12 +151,33 @@ export class HeaderDepth {
     };
   }
 
-  // STEP 1 ends here. We don’t compute depth yet.
+  const cellDiag: PreliminaryHeaderDetectDiagnosis = {
+  empty: false,
+  numberish: true,
+  dateish: false,
+  shortLabel: false,
+  longLabel: false
+
+};
+
+  for (let index = startRow; index <= lastDataRow; index++) {
+
+    const row = this.hasValue(rawAoA[index]);
+
+    if(!Array.isArray(row) || !row.some(c=>this.hasValue(c))){
+      continue;
+    }
+
+    const cellDiagnosis: PreliminaryHeaderDetectDiagnosis[] = 
+
+  }
+
+
   // Return a neutral OK with headerDepth=1 as a placeholder so you can proceed to next steps.
   return {
     valid: true,
     reason: 'OK',
-    headerDepth: 1, // placeholder; will be refined in Steps 2–5
+    headerDepth: 1,
     usedOptions: cfg,
     diagnostics: {
       warnings: [],
@@ -189,8 +220,72 @@ export class HeaderDepth {
 
   }
 
-  private countNonEmpty(row: (unknown | null)[]): number {
-  return row.reduce((acc, c) => acc + (this.hasValue(c) ? 1 : 0), 0);
+private countNonEmpty(row: (unknown | null)[]): number {
+  return row.reduce((acc: number, c) => acc + (this.hasValue(c) ? 1 : 0), 0);
+}
+
+
+private diagnoseCell(cell:unknown, rowLength: number):PreliminaryHeaderDetectDiagnosis{
+
+  let diagnosisConfig : PreliminaryHeaderDetectDiagnosis = {
+    empty : false,
+    numberish : false,
+    dateish : false,
+    shortLabel : false,
+    longLabel : false,
+  }
+
+  if(cell === null || cell === undefined || (typeof cell === 'string' && (cell === '' || cell.trim() === ''))){
+
+    diagnosisConfig.empty = true;
+
+    return diagnosisConfig;
+
+    
+  }
+
+
+  function isNumericString(num:string){
+
+    
+
+
+  }
+
+  function stringNumber(num:string):number{
+
+    let number = num.trim();
+    const number = Number(num);
+    return number;
+
+  }
+
+  if(typeof cell === 'number' || typeof cell === 'string' && (stringNumber(cell))){
+
+    diagnosisConfig.numberish = true;
+  }
+
+  if(cell instanceof Date){
+
+    diagnosisConfig.dateish = true;
+
+  }
+
+  if(typeof cell === 'string' && (cell.trim().length > 10)){
+
+    diagnosisConfig.longLabel = true;
+
+  }
+
+  
+
+  return(
+
+    diagnosisConfig
+
+  );
+  
+
 }
 
 
