@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 
 
+
 export interface HeaderDetectOptions {
   maxScanRows?: number;        // default: 6
   textMaxLength?: number;      // default: 24
@@ -71,8 +72,94 @@ export class HeaderDepth {
       headerMinTextRatio: 0.60,
       dataMinNumericRatio: 0.35,
       minCols: 3,
-      knownKeywords: ["Total","Subtotal","Q1","Q2","Region","Country"],
-      mergeWeight: 1.0,
+      knownKeywords: [
+  // ─── Totals / Summaries ───────────────────────────────
+  "Total", "Subtotal", "Suma", "Balance", "Importe", "Cantidad", "Monto",
+  "Ganancia", "Pérdida", "Margen", "Promedio", "Media", "Mediana",
+  "Desviación", "Varianza", "Conteo", "Cantidad", "Unidades", "Precio",
+  "Valor", "Tasa", "Impuesto", "IVA", "Descuento", "Comisión", "Ingreso",
+  "Egreso", "Beneficio", "Costo", "Coste",
+
+  // ─── Time / Periods ───────────────────────────────
+  "Date", "Fecha", "Mes", "Año", "Trimestre", "Q1", "Q2", "Q3", "Q4",
+  "Semana", "Día", "Periodo", "Período", "Fiscal", "Temporada", "Semestre",
+  "Inicio", "Fin", "Fecha de Inicio", "Fecha de Fin", "Hora", "Tiempo",
+  "Actualización", "Modificado", "Creado", "Registro", "Timestamp",
+
+  // ─── Geography / Locations ───────────────────────────────
+  "Región", "Region", "País", "Country", "Provincia", "State", "Ciudad",
+  "City", "Población", "Comunidad", "Código Postal", "Postal", "Dirección",
+  "Address", "Localidad", "Zona", "Área", "Territorio", "Latitud", "Longitud",
+  "Coordenadas", "Ubicación", "Location",
+
+  // ─── Business / Sales / Marketing ───────────────────────────────
+  "Cliente", "Customer", "Proveedor", "Supplier", "Vendedor", "Vendor",
+  "Socio", "Partner", "Empleado", "Employee", "Departamento", "Department",
+  "División", "Segmento", "Categoría", "Canal", "Marca", "Producto", "Item",
+  "Artículo", "Servicio", "Pedido", "Order", "Factura", "Invoice",
+  "Recibo", "Receipt", "Contrato", "Agreement", "Proyecto", "Campaña",
+  "Oportunidad", "Lead", "Oferta", "Demanda", "Ventas", "Compras",
+
+  // ─── Identifiers / Metadata ───────────────────────────────
+  "ID", "Código", "Code", "Referencia", "Reference", "Número", "No.", "Index",
+  "Clave", "Key", "UUID", "Serie", "Lote", "Batch", "Registro", "Entry",
+  "Fila", "Línea", "Row", "Linea",
+
+  // ─── Status / Flags ───────────────────────────────
+  "Estado", "Status", "Activo", "Inactivo", "Habilitado", "Deshabilitado",
+  "Pendiente", "Aprobado", "Rechazado", "Completado", "Cancelado",
+  "Abierto", "Cerrado", "Válido", "Inválido", "Confirmado", "Borrador",
+
+  // ─── Finance / Accounting ───────────────────────────────
+  "Cuenta", "Account", "Débito", "Crédito", "Banco", "Cash", "Pago", "Payment",
+  "Transacción", "Transaction", "Gasto", "Expense", "Presupuesto", "Budget",
+  "Pronóstico", "Forecast", "Capital", "Equidad", "Activo", "Pasivo",
+  "Moneda", "Currency", "Tipo de Cambio", "Exchange Rate",
+
+  // ─── HR / People ───────────────────────────────
+  "Nombre", "Name", "Apellido", "First Name", "Last Name", "Nombre Completo",
+  "Full Name", "Iniciales", "Sexo", "Género", "Edad", "Años", "Empleado ID",
+  "Trabajo", "Puesto", "Cargo", "Rol", "Equipo", "Manager", "Supervisor",
+  "Fecha de Contratación", "Fecha de Despido", "Salario", "Sueldo", "Wage",
+
+  // ─── Technical / System ───────────────────────────────
+  "IP", "Servidor", "Host", "Dominio", "Domain", "Email", "Correo",
+  "Teléfono", "Contacto", "Usuario", "User", "Contraseña", "Password",
+  "Acceso", "Permiso", "Token", "Sesión", "Error", "Código", "Versión",
+  "Sistema", "Dispositivo", "Equipo", "Aplicación",
+
+  // ─── Education / Academic ───────────────────────────────
+  "Estudiante", "Alumno", "Teacher", "Profesor", "Curso", "Materia", "Asignatura",
+  "Nota", "Calificación", "Puntaje", "Examen", "Prueba", "Créditos",
+  "Nivel", "Año", "Semestre", "Escuela", "Colegio", "Universidad", "Programa",
+
+  // ─── Miscellaneous / Labels ───────────────────────────────
+  "Descripción", "Description", "Detalles", "Notas", "Observaciones",
+  "Comentarios", "Remarks", "Tipo", "Category", "Grupo", "Etiqueta", "Label",
+  "Título", "Title", "Resumen", "Documento", "Adjunto", "Archivo",
+  "Enlace", "Link", "Prioridad", "Rango", "Etapa", "Fase", "Estado Civil",
+  "Comentarios", "Motivo", "Detalle",
+
+  // ─── Logistics / Supply Chain ───────────────────────────────
+  "Envío", "Shipment", "Entrega", "Delivery", "Guía", "Tracking", "Almacén",
+  "Warehouse", "Inventario", "Stock", "Proveedor", "Transportista", "Carrier",
+  "Ruta", "Arrival", "Salida", "Llegada", "Cantidad", "Precio Unitario",
+  "Peso", "Volumen", "Dimensión", "Contenedor", "Bulto",
+
+  // ─── Healthcare ───────────────────────────────
+  "Paciente", "Doctor", "Hospital", "Diagnóstico", "Tratamiento",
+  "Medicamento", "Prescripción", "Dosis", "Alergia", "Condición", "Procedimiento",
+  "Fecha de Nacimiento", "Birthdate",
+
+  // ─── Science / Environment ───────────────────────────────
+  "Temperatura", "Presión", "Humedad", "Altitud", "Velocidad", "Distancia",
+  "Tiempo", "Voltaje", "Corriente", "Energía", "Potencia", "Masa", "Densidad",
+  "Tasa", "Porcentaje", "Ratio",
+
+  // ─── Common abbreviations ───────────────────────────────
+  "FY", "ID#", "No", "Yr", "Mo", "Wk", "Hr", "Min", "Sec",
+  "Año Fiscal", "Semana", "Mes", "Trimestre", "Horas", "Minutos", "Segundos"
+],      mergeWeight: 1.0,
       allowBannerRow: true,
       minHeaderDepth: 1,
       maxHeaderDepth: 6,
@@ -153,22 +240,63 @@ export class HeaderDepth {
 
   const cellDiag: PreliminaryHeaderDetectDiagnosis = {
   empty: false,
-  numberish: true,
+  numberish: false,
   dateish: false,
   shortLabel: false,
   longLabel: false
 
 };
 
-  for (let index = startRow; index <= lastDataRow; index++) {
+  for (let r = startRow; r <= lastDataRow; r++) {
 
-    const row = this.hasValue(rawAoA[index]);
+    const row = rawAoA[r];
+
+    const total = row.length || 1;
+
+    let nTextShort = 0, nTextLong = 0, nNumber = 0, nDate = 0, nEmpty = 0, nKeyWords = 0;
 
     if(!Array.isArray(row) || !row.some(c=>this.hasValue(c))){
       continue;
     }
 
     const cellDiagnosis: PreliminaryHeaderDetectDiagnosis[] = 
+    row.map((c)=>this.diagnoseCell(c, cfg.textMaxLength));
+
+    for(const d of cellDiagnosis){
+
+      if(d.shortLabel) nTextShort++;
+      if(d.longLabel) ++nTextLong;
+      if(d.numberish) nNumber++;
+      if(d.dateish) nDate++;
+      if(d.empty) nEmpty++;
+    }
+
+    const ratioShortLabel = nTextShort / total;
+    const ratioLongLabel = nTextLong / total;
+    const ratioNumber = nNumber / total;
+    const ratioDate = nDate / total;
+    const ratioEmpty = nEmpty / total;
+
+    const ratioText = Math.max(0, 1 - ratioNumber - ratioDate - ratioEmpty);
+
+    const headerScore = this.clamp01(
+        0.45 * ratioShortLabel +
+        0.15 * ratioText +
+        0.10 * (1 - ratioEmpty) -
+        0.15 * ratioNumber -
+        0.10 * ratioDate -
+        0.10 * ratioLongLabel
+    );
+
+    const dataScore = this.clamp01(
+        0.45 * ratioNumber +
+        0.25 * ratioDate +
+        0.20 * (1 - ratioEmpty) -
+        0.20 * ratioShortLabel
+    );
+
+    const headerish = headerScore >= 0.6 && dataScore <= 0.4;
+    const dataish = dataScore  >= 0.6;
 
   }
 
@@ -220,12 +348,53 @@ export class HeaderDepth {
 
   }
 
-private countNonEmpty(row: (unknown | null)[]): number {
+  private countNonEmpty(row: (unknown | null)[]): number {
   return row.reduce((acc: number, c) => acc + (this.hasValue(c) ? 1 : 0), 0);
+  }
+
+  private clamp01(x: number): number {
+  return Math.max(0, Math.min(1, x));
+  }
+
+
+private isStringLikeNumber(str: string): boolean {
+  const s = str.trim();
+  if (!s) return false;
+  if (!/^[+-]?\d+(\.\d+)?$/.test(s)) return false;
+  const n = Number(s);
+  return Number.isFinite(n);
 }
 
+  private isStringLikeDate(str:string):boolean{
 
-private diagnoseCell(cell:unknown, rowLength: number):PreliminaryHeaderDetectDiagnosis{
+    const trimmed = str.trim();
+
+    if(trimmed.length < 4 || trimmed.length > 20) return false;
+
+    const iso = /^\d{4}-\d{1,2}(-\d{1,2})?$/;             // 2024-01-10
+    const slashes = /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/; // 10/01/2024 or 10-01-24
+    const textual = /^\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4}$/; // 10 Jan 2024
+
+    if (iso.test(str) || slashes.test(str) || textual.test(str)) return true;
+    
+    const parsed = Date.parse(trimmed);
+    return Number.isFinite(parsed);
+
+  }
+
+  private containsKeyword(cell: string, keywords: Array[]):boolean{
+
+
+
+    
+
+
+
+  }
+
+//prelimary cell helper
+
+private diagnoseCell(cell:unknown, textMaxLength: number):PreliminaryHeaderDetectDiagnosis{
 
   let diagnosisConfig : PreliminaryHeaderDetectDiagnosis = {
     empty : false,
@@ -244,50 +413,53 @@ private diagnoseCell(cell:unknown, rowLength: number):PreliminaryHeaderDetectDia
     
   }
 
-
-  function isNumericString(num:string){
-
-    
-
-
-  }
-
-  function stringNumber(num:string):number{
-
-    let number = num.trim();
-    const number = Number(num);
-    return number;
-
-  }
-
-  if(typeof cell === 'number' || typeof cell === 'string' && (stringNumber(cell))){
+   if(typeof cell === 'number' || typeof cell === 'string' && (this.isStringLikeNumber(cell))){
 
     diagnosisConfig.numberish = true;
+
+
   }
 
-  if(cell instanceof Date){
+  if(cell instanceof Date || typeof cell === 'string' && (this.isStringLikeDate(cell))){
 
     diagnosisConfig.dateish = true;
 
   }
 
-  if(typeof cell === 'string' && (cell.trim().length > 10)){
+  if(typeof cell === 'string' && (cell.trim().length > textMaxLength)){
 
     diagnosisConfig.longLabel = true;
 
+    return diagnosisConfig;
+
+
   }
 
-  
+  if(typeof cell === 'string' && (cell.trim().length < textMaxLength)){
+
+    diagnosisConfig.shortLabel = true;
+
+    return diagnosisConfig;
+
+  }
+
+  if(typeof cell === 'string' && (this.contains) )
 
   return(
 
     diagnosisConfig
 
   );
+
+
+
+  }
+
+ 
+
+ 
   
 
 }
 
 
-  
-}
