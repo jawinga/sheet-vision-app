@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
+import { HeaderDepth } from '../headerDepth/header-depth';
 
 export interface ParseOptions{
   sheetName?:string; //default first
@@ -83,6 +84,108 @@ export class ExcelParserService  {
 
 
   //helpers
+
+
+
+  private resolveHeaderConfig(
+  aoa: (unknown | null)[][],
+  opts: ParseOptions,
+  headerDepthService: HeaderDepth
+): {
+  startRow: number;
+  headerDepth: number;
+  warnings: string[];
+} {
+
+  const warnings: string[] = [];
+
+  //explicit override (user provides row index and header depth)
+
+  if(typeof opts.headerRowIndex === 'number' && typeof opts.headerDepth === 'number'){
+
+    return{
+
+      startRow: opts.headerRowIndex,
+      headerDepth: opts.headerDepth,
+      warnings: ['User override: both headerRowIndex and headerDepth provided. Auto-detect skipped.'],
+
+    }
+  }
+
+  //user provided only header row
+
+  if(typeof opts.headerRowIndex === 'number' && typeof opts.headerDepth === 'number'){
+
+    const detect = headerDepthService.heuristicDetectsDepth(aoa);
+
+    if(detect.valid){
+      return{
+        startRow: opts.headerRowIndex,
+        headerDepth: detect.headerDepth,
+        warnings: detect.diagnostics?.warnings ?? [],
+      }
+    } else{
+      warnings.push(`Detector failed (${detect.reason}), defaulting to headerDepth = 1.`);
+
+      return{
+        startRow: opts.headerRowIndex,
+        headerDepth: 1,
+        warnings,
+      }
+
+
+    }
+    
+  }
+
+  //user only provides header depth
+
+  if(opts.headerDepth && typeof opts.headerRowIndex !== 'number'){
+
+    const startRow = this.findFirstNonEmptyRow(aoa);
+
+    return{
+
+      startRow,
+      headerDepth: opts.headerDepth,
+      warnings: ['User override: fixed headerDepth used, startRow auto-detected.'],
+    }
+  }
+
+  //nothing provided-full detection
+
+  const detect = headerDepthService.heuristicDetectsDepth(aoa);
+
+  if(detect.valid){
+
+    const startRow = this.findFirstNonEmptyRow(aoa);
+
+    return{
+
+      startRow,
+      headerDepth: detect.headerDepth,
+      warnings: detect.diagnostics?.warnings ?? [],
+
+    }
+
+  }else{
+
+    warnings.push(`Detector failed (${detect.reason}); defaulting to first non-empty row + depth = 1.`);
+    return {
+      startRow: this.findFirstNonEmptyRow(aoa),
+      headerDepth: 1,
+      warnings,
+    };
+
+  }
+
+
+
+
+
+
+
+  }
 
   private findFirstNonEmptyRow(aoa: any[][]):number{
 
