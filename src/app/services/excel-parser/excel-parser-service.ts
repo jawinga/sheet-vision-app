@@ -27,58 +27,62 @@ export interface ParseResult{
 })
 export class ExcelParserService  {
 
+  constructor(private headerDepthService: HeaderDepth) {}
+
   
-  async parseExcel(file:File, opts: ParseOptions = {}): Promise<ParseResult>{
-   
-    const buf = await file.arrayBuffer();
-    const wb = XLSX.read(buf, {type: 'array', cellDates: true});
+  async parseExcel(file: File, opts: ParseOptions = {}): Promise<ParseResult> {
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: 'array', cellDates: true });
 
-    const sheetName = opts.sheetName ?? wb.SheetNames[0];
-    const ws = wb.Sheets[sheetName];
-    if(!ws) throw new Error(`Sheet ${sheetName} not found`);
+  const sheetName = opts.sheetName ?? wb.SheetNames[0];
+  const ws = wb.Sheets[sheetName];
+  if (!ws) throw new Error(`Sheet ${sheetName} not found`);
 
-    const aoa: any[][] = XLSX.utils.sheet_to_json(ws, {
-      header: 1,          
-      raw: true,
-      defval: null,
-      blankrows: false
-    }) as any[][];
+  const aoa: any[][] = XLSX.utils.sheet_to_json(ws, {
+    header: 1,
+    raw: true,
+    defval: null,
+    blankrows: false,
+  }) as any[][];
 
-    const headerRowIndex = typeof opts.headerRowIndex === 'number' ? opts.headerRowIndex : this.findFirstNonEmptyRow(aoa);
+  const { startRow, headerDepth, warnings: detectWarnings } =
+    this.resolveHeaderConfig(aoa, opts, this.headerDepthService);
 
-    const rawHeaderRow = Array.isArray(aoa[headerRowIndex]) ? aoa[headerRowIndex] : [];
-    const rawHeaders = rawHeaderRow.map(c => (c ?? '').toString().trim());
-    const { headers, warnings } = this.cleanAndUniqHeaders(rawHeaders);
+  const rawHeaderRow = Array.isArray(aoa[startRow]) ? aoa[startRow] : [];
+  const rawHeaders = rawHeaderRow.map((c) => (c ?? '').toString().trim());
+  const { headers, warnings: headerCleanWarnings } = this.cleanAndUniqHeaders(rawHeaders);
 
-    let dataAoA = aoa.slice(headerRowIndex + 1).filter((r)=> Array.isArray(r) && r.some(cell=>this.hasValue(cell)));
+  const firstDataRow = startRow + headerDepth;
 
-    if(typeof opts.maxRows === 'number' && opts.maxRows > 0){
-      dataAoA = dataAoA.slice(0, opts.maxRows);
-    }
+  let dataAoA = aoa
+    .slice(firstDataRow)
+    .filter((r) => Array.isArray(r) && r.some((cell) => this.hasValue(cell)));
 
-
-    const rows = dataAoA.map((r)=>{
-
-      const obj: Record<string, unknown> = {};
-      headers.forEach((h, i)=>{
-        obj[h] = this.normalizeCell(r[i]);
-      });
-      return obj;
-    })
-
-    const sampleLimit = opts.sampleLimit ?? 10;
-    return {
-
-      sheetName,
-      columns: headers,
-      rowCount: rows.length,
-      rows,
-      sampleRows: rows.slice(0, sampleLimit),
-      warnings
-
-    };
-
+  if (typeof opts.maxRows === 'number' && opts.maxRows > 0) {
+    dataAoA = dataAoA.slice(0, opts.maxRows);
   }
+
+  const rows = dataAoA.map((r) => {
+    const obj: Record<string, unknown> = {};
+    headers.forEach((h, i) => {
+      obj[h] = this.normalizeCell(r[i]);
+    });
+    return obj;
+  });
+
+  const sampleLimit = opts.sampleLimit ?? 10;
+
+  const warnings = [...detectWarnings, ...headerCleanWarnings];
+
+  return {
+    sheetName,
+    columns: headers,
+    rowCount: rows.length,
+    rows,
+    sampleRows: rows.slice(0, sampleLimit),
+    warnings,
+  };
+}
 
 
 
