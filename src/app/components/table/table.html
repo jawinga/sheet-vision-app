@@ -1,0 +1,31 @@
+<h2>{{ sheetName }}</h2>
+
+@if (columns.length === 0) {
+
+<p>No columns found</p>
+
+} @if (rows.length === 0) {
+
+<p>No rows found</p>
+
+}
+
+<table>
+  <thead>
+    <tr>
+      @for (col of columns; track col) {
+      <th>{{ col }}</th>
+      }
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (row of sampleRows; track $index) {
+    <tr>
+      @for (col of columns; track col) {
+      <td>{{ row[col] }}</td>
+      }
+    </tr>
+    }
+  </tbody>
+</table>

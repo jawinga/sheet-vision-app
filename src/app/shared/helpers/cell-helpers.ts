@@ -1,3 +1,5 @@
+import { CellValue } from './cell-types';
+
 export function containsKeyword(cell: string, keywords: string[]): boolean {
   const normalised = cell.trim().toLowerCase();
   return keywords.some((k) => normalised === k.trim().toLowerCase());

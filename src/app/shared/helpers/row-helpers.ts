@@ -1,4 +1,5 @@
 import { hasValue } from './cell-helpers';
+import { CellValue } from './cell-types';
 
 export function findFirstNonEmptyRow(aoa: CellValue[][]): number {
   for (let i = 0; i < aoa.length; i++) {

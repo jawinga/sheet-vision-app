@@ -1,8 +1,13 @@
-<div class="upload-box" [class.dragover]="isDragOver" (dragover)="onDragOver($event)" (drop)="onDrop($event)" (dragleave)="onDragLeave($event)">
-  
+<div
+  class="upload-box"
+  [class.dragover]="isDragOver"
+  (dragover)="onDragOver($event)"
+  (drop)="onDrop($event)"
+  (dragleave)="onDragLeave($event)"
+>
   @if (uploadState === 'idle') {
 
-      <lucide-icon
+  <lucide-icon
     [img]="CloudUpload"
     [size]="45"
     [color]="'#ed1313'"
@@ -10,47 +15,57 @@
   <p class="first-text">Drag and Drop your Excel file here</p>
   <p class="second-text">or click to browse your files</p>
 
+  } @if (uploadState === 'idle') {
+  <input type="file" hidden (change)="onFileSelect($event)" #fileInput />
+  <app-cta
+    color="accent-hover"
+    label="Upload File"
+    (click)="fileInput.click()"
+  ></app-cta>
+  } @if (uploadState === 'uploading') {
+  <p class="uploading-text">Uploading...</p>
+  <div class="loader">
+    <app-loading-animation></app-loading-animation>
+  </div>
+  } @if(uploadState === 'success') {
+
+  <div class="file">
+    <section class="file-info">
+      <lucide-icon
+        [img]="Retry"
+        [color]="'#ed1313'"
+        (click)="window.location.reload()"
+        >Retry upload</lucide-icon
+      >
+
+      @if (selectedFile) {
+      <span>Name: {{ getFileNameWithoutExtension(selectedFile) }}</span>
+      <span>Type: {{ getFileTypeWithoutName(selectedFile) }}</span>
+      }
+      <span>Size: {{ formatFileSize(selectedFile?.size || 0) }}</span>
+    </section>
+  </div>
+  } @if (uploadState === 'error') {
+
+  <p class="error-text">
+    There was an error uploading the file. Please try again.
+  </p>
+  <lucide-icon
+    [img]="Retry"
+    [color]="'#ed1313'"
+    (click)="window.location.reload()"
+    >Retry upload</lucide-icon
+  >
+
+  } @if (parseState === 'parsed' && uploadState === 'success') {
+
+  <app-table
+    [sheetName]="sheetName"
+    [columns]="columns"
+    [rowCount]="rowCount"
+    [rows]="rows"
+    [sampleRows]="sampleRows"
+    [warnings]="warnings"
+  ></app-table>
   }
-  
-
-
-  @if (uploadState === 'idle') {
-    <input type="file" hidden (change)="onFileSelect($event)" #fileInput>
-    <app-cta color="accent-hover" label="Upload File" (click)="fileInput.click()"></app-cta>
-  }
-
-  @if (uploadState === 'uploading') {
-    <p class="uploading-text">Uploading...</p>
-    <div class="loader">
-      <app-loading-animation></app-loading-animation>
-    </div>
-  }
-
-  @if(uploadState === 'success') {
-
-    <div class="file">
-      <section class="file-info">
-
-        <lucide-icon [img]="Retry" [color]="'#ed1313'"(click)="window.location.reload()">Retry upload</lucide-icon>
-
-
-        @if (selectedFile) {
-                  <span>Name: {{getFileNameWithoutExtension(selectedFile)}}</span>
-                  <span>Type: {{getFileTypeWithoutName(selectedFile)}}</span>
-        }
-        <span>Size: {{ formatFileSize(selectedFile?.size || 0) }}</span>
-
-      </section>  
-    </div>
-  }
-
-  @if (uploadState === 'error') {
-
-    <p class="error-text">There was an error uploading the file. Please try again.</p>
-    <lucide-icon [img]="Retry" [color]="'#ed1313'"(click)="window.location.reload()">Retry upload</lucide-icon>
-
-  }
-
-
-
 </div>
