@@ -41,12 +41,12 @@ export class ExcelParserService {
     const ws = wb.Sheets[sheetName];
     if (!ws) throw new Error(`Sheet ${sheetName} not found`);
 
-    const aoa = XLSX.utils.sheet_to_json(ws, {
+    const aoa: CellValue[][] = XLSX.utils.sheet_to_json(ws, {
       header: 1,
       raw: true,
       defval: null,
       blankrows: false,
-    }) as CellValue[][];
+    });
 
     const {
       startRow,
@@ -64,7 +64,7 @@ export class ExcelParserService {
       }
     );
 
-    const firstDataRow = startRow + headerDepth;
+    const firstDataRow = startRow + safeDepth;
 
     let dataAoA = aoa
       .slice(firstDataRow)
@@ -99,7 +99,7 @@ export class ExcelParserService {
   //helpers
 
   private resolveHeaderConfig(
-    aoa: (CellValue | null)[][],
+    aoa: CellValue[][],
     opts: ParseOptions,
     headerDepthService: HeaderDepth
   ): {
