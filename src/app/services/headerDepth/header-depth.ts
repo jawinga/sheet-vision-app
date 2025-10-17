@@ -1,20 +1,29 @@
 import { Injectable } from '@angular/core';
 import { keywords } from '../../shared/constants/keywords';
-import { containsKeyword, isStringLikeDate, isStringLikeNumber, hasValue } from '../../shared/helpers/cell-helpers';
-import { findFirstNonEmptyRow, findLastNonEmptyRow } from '../../shared/helpers/row-helpers';
+import {
+  containsKeyword,
+  isStringLikeDate,
+  isStringLikeNumber,
+  hasValue,
+} from '../../shared/helpers/cell-helpers';
+import {
+  findFirstNonEmptyRow,
+  findLastNonEmptyRow,
+} from '../../shared/helpers/row-helpers';
+import { CellValue } from '../../shared/helpers/cell-types';
 
 export interface HeaderDetectOptions {
-  maxScanRows?: number;        // default: 6
-  textMaxLength?: number;      // default: 24
+  maxScanRows?: number; // default: 6
+  textMaxLength?: number; // default: 24
   headerMinTextRatio?: number; // default: 0.60 (soft bias)
-  dataMinNumericRatio?: number;// default: 0.35 (soft bias)
-  minCols?: number;            // default: 3
-  knownKeywords?: string[];    // default: []
-  mergeWeight?: number;        // default: 1.0 (reserved for merges integration)
-  allowBannerRow?: boolean;    // default: true
-  minHeaderDepth?: number;     // default: 1
-  maxHeaderDepth?: number;     // default: 6
-  debug?: boolean;             // default: false
+  dataMinNumericRatio?: number; // default: 0.35 (soft bias)
+  minCols?: number; // default: 3
+  knownKeywords?: string[]; // default: []
+  mergeWeight?: number; // default: 1.0 (reserved for merges integration)
+  allowBannerRow?: boolean; // default: true
+  minHeaderDepth?: number; // default: 1
+  maxHeaderDepth?: number; // default: 6
+  debug?: boolean; // default: false
 }
 
 export interface HeaderDetectDiagnostics {
@@ -64,7 +73,7 @@ export class HeaderDepth {
   private readonly defaults: Required<HeaderDetectOptions> = {
     maxScanRows: 6,
     textMaxLength: 24,
-    headerMinTextRatio: 0.60,
+    headerMinTextRatio: 0.6,
     dataMinNumericRatio: 0.35,
     minCols: 3,
     knownKeywords: keywords,
@@ -75,8 +84,14 @@ export class HeaderDepth {
     debug: false,
   };
 
-  heuristicDetectsDepth(rawAoA: (unknown | null)[][], opts?: HeaderDetectOptions): HeaderDetectResult {
-    const cfg: Required<HeaderDetectOptions> = { ...this.defaults, ...(opts ?? {}) };
+  heuristicDetectsDepth(
+    rawAoA: (CellValue | null)[][],
+    opts?: HeaderDetectOptions
+  ): HeaderDetectResult {
+    const cfg: Required<HeaderDetectOptions> = {
+      ...this.defaults,
+      ...(opts ?? {}),
+    };
 
     // quick exits
     if (!Array.isArray(rawAoA) || rawAoA.length === 0) {
@@ -132,48 +147,54 @@ export class HeaderDepth {
 
     for (let r = startRow; r <= scanEnd; r++) {
       const row = rawAoA[r];
-      if (!Array.isArray(row) || !row.some(c => hasValue(c))) continue;
+      if (!Array.isArray(row) || !row.some((c) => hasValue(c))) continue;
 
       const total = row.length || 1;
 
-      let nTextShort = 0, nTextLong = 0, nNumber = 0, nDate = 0, nEmpty = 0, nKeyWords = 0;
+      let nTextShort = 0,
+        nTextLong = 0,
+        nNumber = 0,
+        nDate = 0,
+        nEmpty = 0,
+        nKeyWords = 0;
 
-      const cellDiagnosis: PreliminaryHeaderDetectDiagnosis[] =
-        row.map(c => this.diagnoseCell(c, cfg.textMaxLength));
+      const cellDiagnosis: PreliminaryHeaderDetectDiagnosis[] = row.map((c) =>
+        this.diagnoseCell(c, cfg.textMaxLength)
+      );
 
       for (const d of cellDiagnosis) {
         if (d.shortLabel) nTextShort++;
-        if (d.longLabel)  nTextLong++;
-        if (d.numberish)  nNumber++;
-        if (d.dateish)    nDate++;
-        if (d.empty)      nEmpty++;
-        if (d.keywords)   nKeyWords++;
+        if (d.longLabel) nTextLong++;
+        if (d.numberish) nNumber++;
+        if (d.dateish) nDate++;
+        if (d.empty) nEmpty++;
+        if (d.keywords) nKeyWords++;
       }
 
       const ratioShortLabel = nTextShort / total;
-      const ratioLongLabel  = nTextLong  / total;
-      const ratioNumber     = nNumber    / total;
-      const ratioDate       = nDate      / total;
-      const ratioEmpty      = nEmpty     / total;
-      const ratioKeywords   = nKeyWords  / total;
-      const ratioText       = Math.max(0, 1 - ratioNumber - ratioDate - ratioEmpty);
+      const ratioLongLabel = nTextLong / total;
+      const ratioNumber = nNumber / total;
+      const ratioDate = nDate / total;
+      const ratioEmpty = nEmpty / total;
+      const ratioKeywords = nKeyWords / total;
+      const ratioText = Math.max(0, 1 - ratioNumber - ratioDate - ratioEmpty);
 
       // base scores
       let headerScore = this.clamp01(
         0.45 * ratioShortLabel +
-        0.15 * ratioText +
-        0.10 * ratioKeywords +
-        0.10 * (1 - ratioEmpty) -
-        0.15 * ratioNumber -
-        0.10 * ratioDate -
-        0.10 * ratioLongLabel
+          0.15 * ratioText +
+          0.1 * ratioKeywords +
+          0.1 * (1 - ratioEmpty) -
+          0.15 * ratioNumber -
+          0.1 * ratioDate -
+          0.1 * ratioLongLabel
       );
 
       let dataScore = this.clamp01(
         0.45 * ratioNumber +
-        0.25 * ratioDate +
-        0.20 * (1 - ratioEmpty) -
-        0.20 * ratioShortLabel
+          0.25 * ratioDate +
+          0.2 * (1 - ratioEmpty) -
+          0.2 * ratioShortLabel
       );
 
       // optional soft biases based on config thresholds
@@ -184,15 +205,16 @@ export class HeaderDepth {
         dataScore = this.clamp01(dataScore - 0.05);
       }
 
-      const headerish = headerScore >= 0.60 && dataScore <= 0.40;
-      const dataish   = dataScore  >= 0.60;
+      const headerish = headerScore >= 0.6 && dataScore <= 0.4;
+      const dataish = dataScore >= 0.6;
 
       if (cfg.debug) {
-      
         console.log(
           `r${r}: H=${headerScore.toFixed(2)} D=${dataScore.toFixed(2)} | ` +
-          `short=${(ratioShortLabel*100|0)}% num=${(ratioNumber*100|0)}% ` +
-          `date=${(ratioDate*100|0)}% empty=${(ratioEmpty*100|0)}%`
+            `short=${(ratioShortLabel * 100) | 0}% num=${
+              (ratioNumber * 100) | 0
+            }% ` +
+            `date=${(ratioDate * 100) | 0}% empty=${(ratioEmpty * 100) | 0}%`
         );
       }
 
@@ -210,13 +232,13 @@ export class HeaderDepth {
       });
     }
 
-    const statAt = (row: number) => rowStats.find(s => s.rowIndex === row);
+    const statAt = (row: number) => rowStats.find((s) => s.rowIndex === row);
 
     let firstHeaderRow = startRow;
     const first = statAt(startRow);
 
     if (first && !first.headerish && cfg.allowBannerRow) {
-      const isClose = first.headerScore >= (0.60 - 0.05) && first.dataScore <= 0.60;
+      const isClose = first.headerScore >= 0.6 - 0.05 && first.dataScore <= 0.6;
       if (isClose) firstHeaderRow = startRow + 1;
     }
 
@@ -240,15 +262,17 @@ export class HeaderDepth {
         rowStats,
         depthFromHeuristic: depth,
         mergesConsidered: false,
-        warnings: depth === cfg.minHeaderDepth
-          ? ['Header depth fell back to minimum (few header-like rows detected).']
-          : [],
+        warnings:
+          depth === cfg.minHeaderDepth
+            ? [
+                'Header depth fell back to minimum (few header-like rows detected).',
+              ]
+            : [],
       },
     };
   }
 
-
-  private countNonEmpty(row: (unknown | null)[]): number {
+  private countNonEmpty(row: (CellValue | null)[]): number {
     return row.reduce((acc: number, c) => acc + (hasValue(c) ? 1 : 0), 0);
   }
 
@@ -256,8 +280,10 @@ export class HeaderDepth {
     return Math.max(0, Math.min(1, x));
   }
 
-
-  private diagnoseCell(cell: unknown, textMaxLength: number): PreliminaryHeaderDetectDiagnosis {
+  private diagnoseCell(
+    cell: CellValue,
+    textMaxLength: number
+  ): PreliminaryHeaderDetectDiagnosis {
     const diag: PreliminaryHeaderDetectDiagnosis = {
       empty: false,
       numberish: false,
@@ -268,19 +294,29 @@ export class HeaderDepth {
     };
 
     // empty
-    if (cell === null || cell === undefined || (typeof cell === 'string' && cell.trim() === '')) {
+    if (
+      cell === null ||
+      cell === undefined ||
+      (typeof cell === 'string' && cell.trim() === '')
+    ) {
       diag.empty = true;
       return diag;
     }
 
     // numberish
-    if (typeof cell === 'number' || (typeof cell === 'string' && isStringLikeNumber(cell))) {
+    if (
+      typeof cell === 'number' ||
+      (typeof cell === 'string' && isStringLikeNumber(cell))
+    ) {
       diag.numberish = true;
       return diag;
     }
 
     // dateish
-    if (cell instanceof Date || (typeof cell === 'string' && isStringLikeDate(cell))) {
+    if (
+      cell instanceof Date ||
+      (typeof cell === 'string' && isStringLikeDate(cell))
+    ) {
       diag.dateish = true;
       return diag;
     }
