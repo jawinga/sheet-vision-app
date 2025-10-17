@@ -3,12 +3,9 @@ import * as XLSX from 'xlsx';
 import { HeaderDepth } from '../headerDepth/header-depth';
 import { CellValue } from '../../shared/helpers/cell-types';
 
-import {
-  hasValue,
-  cleanAndUniqHeaders,
-  normalizeCell,
-} from '../../shared/helpers/cell-helpers';
+import { hasValue, normalizeCell } from '../../shared/helpers/cell-helpers';
 import { findFirstNonEmptyRow } from '../../shared/helpers/row-helpers';
+import { HeaderComposer } from '../headerComposer/header-composer';
 
 export interface ParseOptions {
   sheetName?: string; //default first
@@ -31,7 +28,10 @@ export interface ParseResult {
   providedIn: 'root',
 })
 export class ExcelParserService {
-  constructor(private headerDepthService: HeaderDepth) {}
+  constructor(
+    private headerDepthService: HeaderDepth,
+    private headerComposer: HeaderComposer
+  ) {}
 
   async parseExcel(file: File, opts: ParseOptions = {}): Promise<ParseResult> {
     const buf = await file.arrayBuffer();
@@ -41,12 +41,12 @@ export class ExcelParserService {
     const ws = wb.Sheets[sheetName];
     if (!ws) throw new Error(`Sheet ${sheetName} not found`);
 
-    const aoa: any[][] = XLSX.utils.sheet_to_json(ws, {
+    const aoa = XLSX.utils.sheet_to_json(ws, {
       header: 1,
       raw: true,
       defval: null,
       blankrows: false,
-    }) as any[][];
+    }) as CellValue[][];
 
     const {
       startRow,
@@ -54,10 +54,15 @@ export class ExcelParserService {
       warnings: detectWarnings,
     } = this.resolveHeaderConfig(aoa, opts, this.headerDepthService);
 
-    const rawHeaderRow = Array.isArray(aoa[startRow]) ? aoa[startRow] : [];
-    const rawHeaders = rawHeaderRow.map((c) => (c ?? '').toString().trim());
-    const { headers, warnings: headerCleanWarnings } =
-      cleanAndUniqHeaders(rawHeaders);
+    const safeDepth = Math.max(1, headerDepth);
+    const headerRows = aoa.slice(startRow, startRow + safeDepth);
+    const { headers, warnings: composeWarnings } = this.headerComposer.compose(
+      headerRows,
+      {
+        joiner: '_',
+        fallbackPrefix: 'col',
+      }
+    );
 
     const firstDataRow = startRow + headerDepth;
 
@@ -79,7 +84,7 @@ export class ExcelParserService {
 
     const sampleLimit = opts.sampleLimit ?? 10;
 
-    const warnings = [...detectWarnings, ...headerCleanWarnings];
+    const warnings = [...detectWarnings, ...composeWarnings];
 
     return {
       sheetName,
@@ -157,14 +162,14 @@ export class ExcelParserService {
     }
   }
 
-  private mergeData<T>(rawData: (T | null)[]): T[] {
-    let lastValue: T | null = null;
+  // private mergeData<T>(rawData: (T | null)[]): T[] {
+  //   let lastValue: T | null = null;
 
-    return rawData.map((value) => {
-      if (value !== null && value !== undefined) {
-        lastValue = value;
-      }
-      return lastValue as T;
-    });
-  }
+  //   return rawData.map((value) => {
+  //     if (value !== null && value !== undefined) {
+  //       lastValue = value;
+  //     }
+  //     return lastValue as T;
+  //   });
+  // }
 }
