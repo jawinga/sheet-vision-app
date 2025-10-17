@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { HeaderDepth } from '../headerDepth/header-depth';
+import { hasValue, cleanAndUniqHeaders, normalizeCell } from '../../shared/helpers/cell-helpers';
+import { findFirstNonEmptyRow } from '../../shared/helpers/row-helpers';
 
 export interface ParseOptions{
   sheetName?:string; //default first
@@ -50,13 +52,13 @@ export class ExcelParserService  {
 
   const rawHeaderRow = Array.isArray(aoa[startRow]) ? aoa[startRow] : [];
   const rawHeaders = rawHeaderRow.map((c) => (c ?? '').toString().trim());
-  const { headers, warnings: headerCleanWarnings } = this.cleanAndUniqHeaders(rawHeaders);
+  const { headers, warnings: headerCleanWarnings } = cleanAndUniqHeaders(rawHeaders);
 
   const firstDataRow = startRow + headerDepth;
 
   let dataAoA = aoa
     .slice(firstDataRow)
-    .filter((r) => Array.isArray(r) && r.some((cell) => this.hasValue(cell)));
+    .filter((r) => Array.isArray(r) && r.some((cell) => hasValue(cell)));
 
   if (typeof opts.maxRows === 'number' && opts.maxRows > 0) {
     dataAoA = dataAoA.slice(0, opts.maxRows);
@@ -65,7 +67,7 @@ export class ExcelParserService  {
   const rows = dataAoA.map((r) => {
     const obj: Record<string, unknown> = {};
     headers.forEach((h, i) => {
-      obj[h] = this.normalizeCell(r[i]);
+      obj[h] = normalizeCell(r[i]);
     });
     return obj;
   });
@@ -105,7 +107,7 @@ export class ExcelParserService  {
 
   //explicit override (user provides row index and header depth)
 
-  if(typeof opts.headerRowIndex === 'number' && typeof opts.headerDepth === 'number'){
+  if(typeof opts.headerRowIndex  === 'number' && typeof opts.headerDepth === 'number'){
 
     return{
 
@@ -114,39 +116,14 @@ export class ExcelParserService  {
       warnings: ['User override: both headerRowIndex and headerDepth provided. Auto-detect skipped.'],
 
     }
-  }
-
-  //user provided only header row
-
-  if(typeof opts.headerRowIndex === 'number' && typeof opts.headerDepth === 'number'){
-
-    const detect = headerDepthService.heuristicDetectsDepth(aoa);
-
-    if(detect.valid){
-      return{
-        startRow: opts.headerRowIndex,
-        headerDepth: detect.headerDepth,
-        warnings: detect.diagnostics?.warnings ?? [],
-      }
-    } else{
-      warnings.push(`Detector failed (${detect.reason}), defaulting to headerDepth = 1.`);
-
-      return{
-        startRow: opts.headerRowIndex,
-        headerDepth: 1,
-        warnings,
-      }
-
-
-    }
-    
-  }
+  }    
+  
 
   //user only provides header depth
 
   if(opts.headerDepth && typeof opts.headerRowIndex !== 'number'){
 
-    const startRow = this.findFirstNonEmptyRow(aoa);
+    const startRow = findFirstNonEmptyRow(aoa);
 
     return{
 
@@ -162,7 +139,7 @@ export class ExcelParserService  {
 
   if(detect.valid){
 
-    const startRow = this.findFirstNonEmptyRow(aoa);
+    const startRow = findFirstNonEmptyRow(aoa);
 
     return{
 
@@ -176,7 +153,7 @@ export class ExcelParserService  {
 
     warnings.push(`Detector failed (${detect.reason}); defaulting to first non-empty row + depth = 1.`);
     return {
-      startRow: this.findFirstNonEmptyRow(aoa),
+      startRow: findFirstNonEmptyRow(aoa),
       headerDepth: 1,
       warnings,
     };
@@ -191,84 +168,9 @@ export class ExcelParserService  {
 
   }
 
-  private findFirstNonEmptyRow(aoa: any[][]):number{
-
-    const index = aoa.findIndex(r=>Array.isArray(r) && r.some(c=>this.hasValue(c)));
-    return index >= 0 ? index : 0;
-
-  }
-
-  private hasValue(v:unknown):boolean{
-
-    if(v === null || v === undefined) return false;
-    if(typeof v === 'string') return v.trim().length > 0;
-    return true
-
-  }
-
-  private normalizeCell(v:unknown){
-
-    if(v === '' || v === undefined) return null;
-
-    if(v instanceof Date) return v.toISOString();
-
-    if (typeof v === 'number' && !isFinite(v)) {
-      return null;
-    }
-
-    if(typeof v === 'number' && isNaN(v)){
-      return null;
-    }
-
-    return v;
-
-  }
-
-  private cleanAndUniqHeaders(raw:string[]){
-
-    const seen = new Map<string, number>();
-    const warnings: string[] = [];
-
-    const headers = raw.map((h, i)=>{
 
 
-      let cleanup = h
-        .replace(/\r?\n/g, ' ')
-        .trim()
-        .replace(/\s+/g, '_')
-        .replace(/[^\w]/g, '_')
-        .replace(/^_+|_+$/g, '')
-        .toLowerCase();
-
-
-      if (!cleanup) {
-      cleanup = `col_${i + 1}`; // fallback for empty headers
-      warnings.push(`Empty header at column ${i + 1} renamed to "${cleanup}"`);
-    }
-
-      if(seen.has(cleanup)){
-
-        const count = (seen.get(cleanup) ?? 1) + 1;
-        seen.set(cleanup, count);
-
-        const alt = `${cleanup}_${count}`;
-
-        warnings.push(`Duplicate header "${h}" renamed to "${alt}"`);
-
-        return alt;
-
-      }else{
-
-        seen.set(cleanup, 1);
-        return cleanup;
-
-      }
-
-    });
-
-    return {headers, warnings};
-
-  }
+  
 
   private mergeData<T>(rawData: (T | null)[]): T[] {
   let lastValue: T | null = null;

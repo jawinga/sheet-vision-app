@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { keywords } from '../../shared/constants/keywords';
+import { containsKeyword, isStringLikeDate, isStringLikeNumber, hasValue } from '../../shared/helpers/cell-helpers';
+import { findFirstNonEmptyRow, findLastNonEmptyRow } from '../../shared/helpers/row-helpers';
 
 export interface HeaderDetectOptions {
   maxScanRows?: number;        // default: 6
@@ -87,7 +89,7 @@ export class HeaderDepth {
       };
     }
 
-    const startRow = this.findFirstNonEmptyRow(rawAoA);
+    const startRow = findFirstNonEmptyRow(rawAoA);
     if (startRow < 0 || startRow >= rawAoA.length) {
       return {
         valid: false,
@@ -114,7 +116,7 @@ export class HeaderDepth {
       };
     }
 
-    const lastDataRow = this.findLastNonEmptyRow(rawAoA);
+    const lastDataRow = findLastNonEmptyRow(rawAoA);
     const scanEnd = Math.min(startRow + cfg.maxScanRows - 1, lastDataRow);
     if (scanEnd < startRow) {
       return {
@@ -130,7 +132,7 @@ export class HeaderDepth {
 
     for (let r = startRow; r <= scanEnd; r++) {
       const row = rawAoA[r];
-      if (!Array.isArray(row) || !row.some(c => this.hasValue(c))) continue;
+      if (!Array.isArray(row) || !row.some(c => hasValue(c))) continue;
 
       const total = row.length || 1;
 
@@ -245,64 +247,15 @@ export class HeaderDepth {
     };
   }
 
-  // helpers
-
-  private findLastNonEmptyRow(aoa: (unknown | null)[][]): number {
-    for (let i = aoa.length - 1; i >= 0; i--) {
-      const row = aoa[i];
-      if (Array.isArray(row) && row.some(c => this.hasValue(c))) return i;
-    }
-    return -1;
-  }
-
-  private findFirstNonEmptyRow(aoa: unknown[][]): number {
-    for (let i = 0; i < aoa.length; i++) {
-      const row = aoa[i];
-      if (Array.isArray(row) && row.some(c => this.hasValue(c))) return i;
-    }
-    return -1;
-  }
-
-  private hasValue(v: unknown): boolean {
-    if (v === undefined || v === null || v === '') return false;
-    if (typeof v === 'string') return v.trim().length > 0;
-    return true;
-  }
 
   private countNonEmpty(row: (unknown | null)[]): number {
-    return row.reduce((acc: number, c) => acc + (this.hasValue(c) ? 1 : 0), 0);
+    return row.reduce((acc: number, c) => acc + (hasValue(c) ? 1 : 0), 0);
   }
 
   private clamp01(x: number): number {
     return Math.max(0, Math.min(1, x));
   }
 
-  private isStringLikeNumber(str: string): boolean {
-    const s = str.trim();
-    if (!s) return false;
-    if (!/^[+-]?\d+(\.\d+)?$/.test(s)) return false;
-    const n = Number(s);
-    return Number.isFinite(n);
-  }
-
-  private isStringLikeDate(str: string): boolean {
-    const trimmed = str.trim();
-    if (trimmed.length < 4 || trimmed.length > 20) return false;
-
-    const iso = /^\d{4}-\d{1,2}(-\d{1,2})?$/;             // 2024-01 or 2024-01-10
-    const slashes = /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/; // 10/01/2024 or 10-01-24
-    const textual = /^\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4}$/; // 10 Jan 2024
-
-    if (iso.test(trimmed) || slashes.test(trimmed) || textual.test(trimmed)) return true;
-
-    const parsed = Date.parse(trimmed);
-    return Number.isFinite(parsed);
-  }
-
-  private containsKeyword(cell: string, keywords: string[]): boolean {
-    const normalised = cell.trim().toLowerCase();
-    return keywords.some(k => normalised === k.trim().toLowerCase());
-  }
 
   private diagnoseCell(cell: unknown, textMaxLength: number): PreliminaryHeaderDetectDiagnosis {
     const diag: PreliminaryHeaderDetectDiagnosis = {
@@ -321,13 +274,13 @@ export class HeaderDepth {
     }
 
     // numberish
-    if (typeof cell === 'number' || (typeof cell === 'string' && this.isStringLikeNumber(cell))) {
+    if (typeof cell === 'number' || (typeof cell === 'string' && isStringLikeNumber(cell))) {
       diag.numberish = true;
       return diag;
     }
 
     // dateish
-    if (cell instanceof Date || (typeof cell === 'string' && this.isStringLikeDate(cell))) {
+    if (cell instanceof Date || (typeof cell === 'string' && isStringLikeDate(cell))) {
       diag.dateish = true;
       return diag;
     }
@@ -340,7 +293,7 @@ export class HeaderDepth {
       } else {
         diag.shortLabel = true;
       }
-      if (this.containsKeyword(s, this.defaults.knownKeywords)) {
+      if (containsKeyword(s, this.defaults.knownKeywords)) {
         diag.keywords = true;
       }
       return diag;
