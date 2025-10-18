@@ -8,8 +8,10 @@ import { FileService } from '../../services/file/file-service';
 import { LoadingAnimation } from '../loading-animation/loading-animation';
 import { FileValidationService } from '../../services/validation/file-validation-service';
 import { Table } from '../table/table';
+import { SheetButton } from '../sheet-button/sheet-button';
 import {
   ExcelParserService,
+  ParseOptions,
   ParseResult,
 } from '../../services/excel-parser/excel-parser-service';
 import { CellValue } from '../../shared/helpers/cell-types';
@@ -25,6 +27,7 @@ import { CellValue } from '../../shared/helpers/cell-types';
     MatSliderModule,
     LoadingAnimation,
     Table,
+    SheetButton,
   ],
   templateUrl: './upload-file.html',
   styleUrl: './upload-file.scss',
@@ -37,6 +40,9 @@ export class UploadFile {
   ) {}
 
   sheetName: string = '';
+  sheetNames: string[] = [];
+  selectedSheetName: string = '';
+  lastFile: File | null = null;
   columns: string[] = [];
   rowCount: number = 0;
   rows: Array<Record<string, CellValue>> = [];
@@ -52,6 +58,13 @@ export class UploadFile {
   parseState: 'idle' | 'parseLoading' | 'parsed' | 'parseError' = 'idle';
   selectedFile?: File | null = null;
   lastParseResult?: ParseResult;
+
+  onSelectSheet(name: string) {
+    if (!this.lastFile) return;
+    this.parseState = 'parseLoading';
+    this.selectedSheetName = name;
+    this.startParse(this.lastFile, { sheetName: name });
+  }
 
   onFileSelect(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -70,6 +83,7 @@ export class UploadFile {
     }
 
     this.selectedFile = file;
+    this.lastFile = file;
 
     this.startParse(file);
   }
@@ -112,6 +126,7 @@ export class UploadFile {
     }
 
     this.selectedFile = file;
+    this.lastFile = file;
     this.startParse(file);
   }
 
@@ -153,16 +168,19 @@ export class UploadFile {
     return name.substring(lastDotIndex + 1);
   }
 
-  startParse(file: File) {
+  startParse(file: File, opts?: ParseOptions) {
     this.parseState = 'parseLoading';
     this.excelParseService
-      .parseExcel(file, {})
+      .parseExcel(file, opts)
       .then((result) => {
         this.lastParseResult = result;
         this.parseState = 'parsed';
         console.log('File parsed successfully');
         console.log('Sheet name ' + result.sheetName);
         this.sheetName = result.sheetName;
+        console.log('Sheet name ' + result.sheetNames);
+        this.sheetNames = result.sheetNames;
+        this.selectedSheetName = result.sheetName;
         console.log('Detected headers: ' + result.columns);
         this.columns = result.columns;
         console.log('Row count: ' + result.rowCount);

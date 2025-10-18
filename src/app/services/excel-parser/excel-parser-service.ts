@@ -8,7 +8,7 @@ import { findFirstNonEmptyRow } from '../../shared/helpers/row-helpers';
 import { HeaderComposer } from '../headerComposer/header-composer';
 
 export interface ParseOptions {
-  sheetName?: string; //default first
+  sheetName?: string;
   headerRowIndex?: number;
   sampleLimit?: number;
   maxRows?: number;
@@ -17,6 +17,7 @@ export interface ParseOptions {
 
 export interface ParseResult {
   sheetName: string;
+  sheetNames: string[];
   columns: string[];
   rowCount: number;
   rows: Array<Record<string, CellValue>>;
@@ -38,6 +39,7 @@ export class ExcelParserService {
     const wb = XLSX.read(buf, { type: 'array', cellDates: true });
 
     const sheetName = opts.sheetName ?? wb.SheetNames[0];
+    const sheetNames = wb.SheetNames;
     const ws = wb.Sheets[sheetName];
     if (!ws) throw new Error(`Sheet ${sheetName} not found`);
 
@@ -88,6 +90,7 @@ export class ExcelParserService {
 
     return {
       sheetName,
+      sheetNames,
       columns: headers,
       rowCount: rows.length,
       rows,

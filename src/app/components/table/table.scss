@@ -1,0 +1,48 @@
+@use "../../../styles/variables" as *;
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: $color-text-primary;
+  margin-bottom: 1rem;
+}
+
+table,
+th,
+td {
+  border: 2px solid $color-border;
+}
+
+th {
+  background-color: $color-shadow;
+  &:hover {
+    background-color: $color-shadow-lg;
+  }
+}
+
+th,
+td {
+  padding: 2rem;
+  text-align: left;
+}
+
+tr {
+  &:hover {
+    background-color: $color-accent-hover;
+  }
+}
+
+tr:nth-child(even) {
+  background-color: $color-bg-elevated;
+  &:hover {
+    background-color: $color-accent-hover;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}

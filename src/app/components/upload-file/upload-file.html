@@ -67,5 +67,20 @@
     [sampleRows]="sampleRows"
     [warnings]="warnings"
   ></app-table>
+
+  <div class="sheet-options">
+    @if (sheetNames.length > 1) { @for (name of sheetNames; track name; let i =
+    $index) {
+
+    <app-sheet-button
+      [number]="i"
+      [label]="name"
+      [selected]="name === selectedSheetName"
+      (select)="onSelectSheet(name)"
+    >
+    </app-sheet-button>
+
+    } }
+  </div>
   }
 </div>

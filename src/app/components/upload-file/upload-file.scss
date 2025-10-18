@@ -27,13 +27,19 @@ div {
   margin-bottom: 1.5rem;
 }
 
-.dragover{
+.dragover {
   background-color: lighten($color-bg-card, 7%);
 }
 
-.file-info{
+.file-info {
   display: flex;
   gap: 1rem;
   flex-direction: row;
-  
+}
+
+.sheet-options {
+  display: flex;
+  gap: 1.5rem;
+  flex-direction: row;
+  border: 0;
 }

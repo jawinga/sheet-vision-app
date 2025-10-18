@@ -1,0 +1,25 @@
+@use "../../../styles/variables" as *;
+
+button {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  height: 5px;
+  width: fit-content;
+  align-items: center;
+  justify-self: center;
+  padding: 1.5rem;
+  background-color: transparent;
+  border: 2px solid $color-border;
+  border-radius: $radius-md;
+
+  &:hover {
+    background-color: $color-bg-elevated;
+    border-color: $color-accent-hover;
+    cursor: pointer;
+  }
+}
+
+span {
+  color: $color-text-muted;
+}
