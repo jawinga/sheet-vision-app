@@ -66,11 +66,15 @@
     [rows]="rows"
     [sampleRows]="sampleRows"
     [warnings]="warnings"
+    [headerRows]="lastParseResult?.headerRows || []"
+    [mergeRanges]="lastParseResult?.mergeRanges || []"
+    [startRow]="lastParseResult?.startRow ?? 0"
+    [headerDepth]="lastParseResult?.headerDepth ?? 1"
   ></app-table>
 
+  @if (sheetNames.length > 1) {
   <div class="sheet-options">
-    @if (sheetNames.length > 1) { @for (name of sheetNames; track name; let i =
-    $index) {
+    @for (name of sheetNames; track name; let i = $index) {
 
     <app-sheet-button
       [number]="i"
@@ -80,7 +84,7 @@
     >
     </app-sheet-button>
 
-    } }
+    }
   </div>
-  }
+  } }
 </div>

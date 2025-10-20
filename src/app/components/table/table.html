@@ -11,20 +11,37 @@
 }
 
 <table>
+  @if ((headerVM?.length ?? 0) > 0) {
+
   <thead>
+    @for (row of headerVM; track $index) {
     <tr>
-      @for (col of columns; track col) {
-      <th>{{ col }}</th>
-      }
+      @for (cell of row; track $index) { @if (!cell.hidden) {
+      <th [attr.colspan]="cell.colspan" [attr.rowspan]="cell.rowspan">
+        {{ cell.text }}
+      </th>
+      } }
     </tr>
+    }
   </thead>
+
+  }
 
   <tbody>
     @for (row of sampleRows; track $index) {
     <tr>
-      @for (col of columns; track col) {
+      <!-- First column: merge with rowspan -->
+      @if (bodyMergeKey) { @let meta = bodyMergeMeta[$index]; @if
+      (!meta?.hidden) {
+      <td [attr.rowspan]="meta?.rowspan ?? 1">
+        {{ row[bodyMergeKey] }}
+      </td>
+      } }
+
+      <!-- Other columns (skip the merged one) -->
+      @for (col of columns; track $index) { @if (col !== bodyMergeKey) {
       <td>{{ row[col] }}</td>
-      }
+      } }
     </tr>
     }
   </tbody>

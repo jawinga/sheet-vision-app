@@ -15,4 +15,8 @@ export class SheetButton {
   emitChangeSheet() {
     this.select.emit();
   }
+
+  get displayNumber() {
+    return (this.number ?? 0) + 1;
+  }
 }

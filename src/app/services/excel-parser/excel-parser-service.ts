@@ -13,6 +13,7 @@ export interface ParseOptions {
   sampleLimit?: number;
   maxRows?: number;
   headerDepth?: number;
+  expandMerges?: boolean;
 }
 
 export interface ParseResult {
@@ -22,8 +23,24 @@ export interface ParseResult {
   rowCount: number;
   rows: Array<Record<string, CellValue>>;
   sampleRows: Array<Record<string, CellValue>>;
+  mergeRanges?: Array<{
+    s: { r: number; c: number };
+    e: { r: number; c: number };
+  }>;
+  headerRows?: CellValue[][];
+  startRow?: number;
+  headerDepth?: number;
   warnings: string[];
 }
+
+type HeaderCellVM = {
+  text: string;
+  rowSpan: number;
+  colSpan: number;
+  hidden: boolean;
+};
+
+type HeaderVM = HeaderCellVM[][];
 
 @Injectable({
   providedIn: 'root',
@@ -37,11 +54,28 @@ export class ExcelParserService {
   async parseExcel(file: File, opts: ParseOptions = {}): Promise<ParseResult> {
     const buf = await file.arrayBuffer();
     const wb = XLSX.read(buf, { type: 'array', cellDates: true });
-
     const sheetName = opts.sheetName ?? wb.SheetNames[0];
     const sheetNames = wb.SheetNames;
     const ws = wb.Sheets[sheetName];
+
     if (!ws) throw new Error(`Sheet ${sheetName} not found`);
+
+    const mergeRangesOriginal = (ws['!merges'] ?? []).map((m) => ({
+      s: { ...m.s },
+      e: { ...m.e },
+    }));
+
+    const localWarnings: string[] = [];
+
+    if (opts.expandMerges !== false) {
+      const stats = this.expandMergesInWorksheet(ws);
+
+      if (stats.merges > 0) {
+        localWarnings.push(
+          `Expanded ${stats.merges} merged range(s); filled ${stats.filled} cell(s).`
+        );
+      }
+    }
 
     const aoa: CellValue[][] = XLSX.utils.sheet_to_json(ws, {
       header: 1,
@@ -86,8 +120,7 @@ export class ExcelParserService {
 
     const sampleLimit = opts.sampleLimit ?? 10;
 
-    const warnings = [...detectWarnings, ...composeWarnings];
-
+    const warnings = [...localWarnings, ...detectWarnings, ...composeWarnings];
     return {
       sheetName,
       sheetNames,
@@ -95,6 +128,10 @@ export class ExcelParserService {
       rowCount: rows.length,
       rows,
       sampleRows: rows.slice(0, sampleLimit),
+      mergeRanges: mergeRangesOriginal,
+      headerRows,
+      startRow,
+      headerDepth,
       warnings,
     };
   }
@@ -175,4 +212,35 @@ export class ExcelParserService {
   //     return lastValue as T;
   //   });
   // }
+
+  private expandMergesInWorksheet(ws: XLSX.WorkSheet): {
+    merges: number;
+    filled: number;
+  } {
+    const merges = ws['!merges'];
+    if (!Array.isArray(merges) || merges.length === 0)
+      return { merges: 0, filled: 0 };
+
+    let filled = 0;
+
+    for (const m of merges) {
+      const topLeftRef = XLSX.utils.encode_cell(m.s);
+      const topLeftCell = ws[topLeftRef];
+      if (!topLeftCell || !('v' in topLeftCell)) continue;
+
+      for (let r = m.s.r; r <= m.e.r; r++) {
+        for (let c = m.s.c; c <= m.e.c; c++) {
+          const ref = XLSX.utils.encode_cell({ r, c });
+          const tgt = ws[ref] as any;
+          const isTrulyEmpty = !tgt || !('v' in tgt);
+          if (!isTrulyEmpty) continue;
+
+          const { t, v, z, w, s } = topLeftCell;
+          ws[ref] = s ? { t, v, z, w, s } : { t, v, z, w };
+          filled++;
+        }
+      }
+    }
+    return { merges: merges.length, filled };
+  }
 }
