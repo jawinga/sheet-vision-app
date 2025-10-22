@@ -1,5 +1,18 @@
-import type { ChartConfiguration } from 'chart.js';
+import type {
+  ChartConfiguration as ChartConfig,
+  ChartData as ChartD,
+  ChartDataset,
+  ChartOptions,
+  ChartType,
+  DefaultDataPoint,
+} from 'chart.js';
 
+//adapter result
+export type AdaptResult =
+  | { ok: true; config: ChartConfig<'bar'> }
+  | { ok: false; error: string };
+
+//target
 export interface TargetBar {
   type: 'bar';
   xKey: string;
@@ -11,42 +24,57 @@ export interface TargetBar {
   title?: string;
 }
 
-export type AdaptResult =
-  | { ok: true; config: ChartConfiguration<'bar'> }
-  | { ok: false; error: string };
+//adaptee
+const config: ChartConfig<'bar'> = {
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [
+      {
+        label: 'My first dataset',
+        data: [],
+        backgroundColor: [],
+      },
+    ],
+  },
+};
 
-export function toChartJsBar(target: TargetBar): AdaptResult {
-  if (target.type !== 'bar')
-    return { ok: false, error: 'Expected type "bar".' };
-  if (!target.xKey) return { ok: false, error: 'xKey is required.' };
-  if (!Array.isArray(target.yKeys) || target.yKeys.length !== 1)
-    return { ok: false, error: 'yKeys must contain exactly one key for v0.' };
-  if (!Array.isArray(target.data) || target.data.length === 0)
-    return { ok: false, error: 'data must be a non-empty array.' };
+//adapter function
+
+function adaptBarChart(target: TargetBar): AdaptResult {
+  if (target.type !== 'bar') {
+    return {
+      ok: false,
+      error: 'Wrong type of chart',
+    };
+  }
+
+  if (target.yKeys.length <= 0) {
+    return {
+      ok: false,
+      error: 'Found no yKeys',
+    };
+  }
+  if (!target.xKey) {
+    return {
+      ok: false,
+      error: 'Found no xKey',
+    };
+  }
+
+  if (target.data.length === 0) {
+    return {
+      ok: false,
+      error: 'Not enough data found',
+    };
+  }
 
   const [yKey] = target.yKeys;
+  const labels = target.data.map((row) => String(row[target.xKey]));
+  const values = target.data.map((row) => Number(row[yKey]));
+  const backgroundColor = target.colorPalette?.[0];
 
-  const labels = target.data.map((row, i) => {
-    const v = row[target.xKey];
-    if (v == null)
-      throw new Error(`Row ${i + 1}: missing xKey "${target.xKey}".`);
-    return typeof v === 'string' || typeof v === 'number' ? v : String(v);
-  });
-
-  const values = target.data.map((row, i) => {
-    const raw = row[yKey];
-    const num = typeof raw === 'number' ? raw : Number(raw);
-    if (!Number.isFinite(num))
-      throw new Error(`Row ${i + 1}: yKey "${yKey}" is not a number.`);
-    return num;
-  });
-
-  const backgroundColor =
-    Array.isArray(target.colorPalette) && target.colorPalette.length > 0
-      ? target.colorPalette[0]
-      : undefined;
-
-  const config: ChartConfiguration<'bar'> = {
+  const shaped: ChartConfig<'bar', number[], string> = {
     type: 'bar',
     data: {
       labels,
@@ -54,7 +82,7 @@ export function toChartJsBar(target: TargetBar): AdaptResult {
         {
           label: yKey,
           data: values,
-          ...(backgroundColor ? { backgroundColor } : {}),
+          backgroundColor,
         },
       ],
     },
@@ -63,5 +91,8 @@ export function toChartJsBar(target: TargetBar): AdaptResult {
     },
   };
 
-  return { ok: true, config };
+  return {
+    ok: true,
+    config: shaped,
+  };
 }
