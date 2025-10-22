@@ -11,7 +11,7 @@ import {
 } from 'chart.js';
 import { palette as defaultPalette } from '../../constants/palette';
 
-type ChartKind = 'bar' | 'doughnut' | 'line' | 'area';
+export type ChartKind = 'bar' | 'doughnut' | 'line' | 'area';
 
 type Result<T, E = string> =
   | { ok: true; value: T; error?: never }
@@ -57,7 +57,7 @@ export interface TargetDoughnut extends TargetBase {
   valueKey: string;
 }
 
-type Target = TargetBar | TargetDoughnut | TargetLine | TargetArea;
+export type Target = TargetBar | TargetDoughnut | TargetLine | TargetArea;
 //adaptee shape
 const configBar: ChartConfig<'bar'> = {
   type: 'bar',

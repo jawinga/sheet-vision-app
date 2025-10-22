@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import {
   LucideAngularModule,
   ChartColumnDecreasing,
@@ -30,5 +30,13 @@ export class ChartType {
   @Input() chartName: string = 'chart';
   get iconImg() {
     return this.icon ? this.IconMap[this.icon] : undefined;
+  }
+
+  @Output() targetChange = new EventEmitter<
+    'bar' | 'line' | 'area' | 'doughnut'
+  >();
+
+  emitSelectedChart() {
+    this.targetChange.emit();
   }
 }
