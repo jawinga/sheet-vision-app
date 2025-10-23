@@ -3,11 +3,18 @@ import { UploadFile } from '../../components/upload-file/upload-file';
 import { ChartType } from '../../components/chart-type/chart-type';
 import { LucideAngularModule, Sparkles } from 'lucide-angular';
 import { AIGeneration } from '../../components/aigeneration/aigeneration';
-import { ChartKind } from '../../shared/adapters/chart/adapter';
+import { ChartKind, Target } from '../../shared/adapters/chart/adapter';
+import { ChartBuilder } from '../../components/chart-builder/chart-builder';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [UploadFile, ChartType, LucideAngularModule, AIGeneration],
+  imports: [
+    UploadFile,
+    ChartType,
+    LucideAngularModule,
+    AIGeneration,
+    ChartBuilder,
+  ],
   standalone: true,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -24,6 +31,7 @@ export class Dashboard {
 
   columns!: string[];
   rows!: Array<Record<string, unknown>>;
+  target!: Target;
 
   handleUploadData(columns: string[], rows: Array<Record<string, unknown>>) {
     this.columns = columns;
@@ -35,6 +43,10 @@ export class Dashboard {
 
   handleRowsChange(rows: Array<Record<string, unknown>>) {
     this.rows = rows;
+  }
+
+  handleTargetChange(target: Target) {
+    this.target = target;
   }
 
   onChartTypeClicked(kind: ChartKind) {

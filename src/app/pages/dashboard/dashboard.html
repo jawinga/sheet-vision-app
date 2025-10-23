@@ -27,6 +27,7 @@
     [columns]="columns"
     [rows]="rows"
     [selectedChart]="selectedChart"
+    (targetChange)="handleTargetChange($event)"
   ></app-chart-builder>
 
   <h3>AI Insights <lucide-icon [img]="Sparkles"></lucide-icon></h3>
