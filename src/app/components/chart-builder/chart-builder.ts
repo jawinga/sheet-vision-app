@@ -51,7 +51,7 @@ type BuilderState = {
 })
 export class ChartBuilder implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.columns.length && this.rows.length && this.selectedChart) {
+    if (this.columns?.length && this.rows?.length && this.selectedChart) {
       this.buildAndEmitTarget();
     }
   }

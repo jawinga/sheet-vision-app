@@ -5,6 +5,7 @@ import { LucideAngularModule, Sparkles } from 'lucide-angular';
 import { AIGeneration } from '../../components/aigeneration/aigeneration';
 import { ChartKind, Target } from '../../shared/adapters/chart/adapter';
 import { ChartBuilder } from '../../components/chart-builder/chart-builder';
+import { Chart } from '../../components/chart/chart';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +15,7 @@ import { ChartBuilder } from '../../components/chart-builder/chart-builder';
     LucideAngularModule,
     AIGeneration,
     ChartBuilder,
+    Chart,
   ],
   standalone: true,
   templateUrl: './dashboard.html',
@@ -28,7 +30,6 @@ export class Dashboard {
   ] as const;
   readonly Sparkles = Sparkles;
   selectedChart!: ChartKind;
-
   columns!: string[];
   rows!: Array<Record<string, unknown>>;
   target!: Target;

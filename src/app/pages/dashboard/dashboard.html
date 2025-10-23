@@ -10,6 +10,7 @@
     (columnsChange)="handleColumnsChange($event)"
     (rowsChange)="handleRowsChange($event)"
   ></app-upload-file>
+
   <h3>Choose your Chart Style</h3>
 
   <div class="charts-list">
@@ -19,6 +20,7 @@
       [chartName]="chart.name"
       [chartType]="chart.type"
       (targetChange)="onChartTypeClicked($event)"
+      [isSelected]="selectedChart === chart.type"
     ></app-chart-type>
     }
   </div>
@@ -29,6 +31,7 @@
     [selectedChart]="selectedChart"
     (targetChange)="handleTargetChange($event)"
   ></app-chart-builder>
+  <app-chart [target]="target"></app-chart>
 
   <h3>AI Insights <lucide-icon [img]="Sparkles"></lucide-icon></h3>
   <app-aigeneration></app-aigeneration>

@@ -6,14 +6,16 @@ import {
   ChartPie,
   ChartArea,
   ChartCandlestick,
+  CheckCheck,
 } from 'lucide-angular';
 import { ChartKind } from '../../shared/adapters/chart/adapter';
+import { NgClass } from '@angular/common';
 
 type IconVariant = 'chart1' | 'chart2' | 'chart3' | 'chart4' | 'chart5';
 
 @Component({
   selector: 'app-chart-type',
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, NgClass],
   templateUrl: './chart-type.html',
   standalone: true,
   styleUrl: './chart-type.scss',
@@ -37,8 +39,9 @@ export class ChartType {
   @Input() icon: IconVariant = 'chart1';
   @Input() chartName: string = 'chart';
   @Input() chartType!: ChartKind;
-
+  @Input() isSelected: boolean = false;
   @Output() targetChange = new EventEmitter<ChartKind>();
+  readonly check = CheckCheck;
 
   emitSelectedChart() {
     const chartType = this.chartType;

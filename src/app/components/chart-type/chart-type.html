@@ -1,8 +1,18 @@
-<div class="chart-type" (click)="emitSelectedChart()">
+<div
+  class="chart-type"
+  (click)="emitSelectedChart()"
+  [ngClass]="{ selected: isSelected }"
+>
+  @if (isSelected) {
+  <lucide-icon [img]="check" class="check"></lucide-icon>
+
+  }
+
   <lucide-icon
     [img]="iconImg"
     class="chart-type__icon"
     [size]="32"
   ></lucide-icon>
+
   <p class="chart-type__label">{{ chartName }}</p>
 </div>
