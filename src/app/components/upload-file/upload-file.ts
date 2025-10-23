@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { LucideAngularModule, CloudUpload, RotateCcw } from 'lucide-angular';
 import { Cta } from '../cta/cta';
 import { CommonModule } from '@angular/common';
@@ -38,6 +38,9 @@ export class UploadFile {
     private fileValidationService: FileValidationService,
     private excelParseService: ExcelParserService
   ) {}
+
+  @Output() columnsChange = new EventEmitter<string[]>();
+  @Output() rowsChange = new EventEmitter<Array<Record<string, unknown>>>();
 
   sheetName: string = '';
   sheetNames: string[] = [];
@@ -192,6 +195,8 @@ export class UploadFile {
         console.log('Warnings: ' + result.warnings);
         this.warnings = result.warnings;
         this.startUpload(file);
+        this.columnsChange.emit(this.columns);
+        this.rowsChange.emit(this.rows);
       })
       .catch((err) => {
         this.parseState = 'parseError';

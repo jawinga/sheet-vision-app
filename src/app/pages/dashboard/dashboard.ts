@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { UploadFile } from '../../components/upload-file/upload-file';
 import { ChartType } from '../../components/chart-type/chart-type';
 import { LucideAngularModule, Sparkles } from 'lucide-angular';
 import { AIGeneration } from '../../components/aigeneration/aigeneration';
+import { ChartKind } from '../../shared/adapters/chart/adapter';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,13 +13,31 @@ import { AIGeneration } from '../../components/aigeneration/aigeneration';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
-  readonly Sparkles = Sparkles;
-
   chartVariants = [
-    { icon: 'chart1', name: 'Bar Chart' },
-    { icon: 'chart2', name: 'Scatter Plot' },
-    { icon: 'chart3', name: 'Pie Chart' },
-    { icon: 'chart4', name: 'Area Chart' },
-    { icon: 'chart5', name: 'Candlestick' },
+    { icon: 'chart1', name: 'Bar', type: 'bar' },
+    { icon: 'chart2', name: 'Area', type: 'area' },
+    { icon: 'chart3', name: 'Line', type: 'line' },
+    { icon: 'chart4', name: 'Doughnut', type: 'doughnut' },
   ] as const;
+  readonly Sparkles = Sparkles;
+  selectedChart!: ChartKind;
+
+  columns!: string[];
+  rows!: Array<Record<string, unknown>>;
+
+  handleUploadData(columns: string[], rows: Array<Record<string, unknown>>) {
+    this.columns = columns;
+  }
+
+  handleColumnsChange(columns: string[]) {
+    this.columns = columns;
+  }
+
+  handleRowsChange(rows: Array<Record<string, unknown>>) {
+    this.rows = rows;
+  }
+
+  onChartTypeClicked(kind: ChartKind) {
+    this.selectedChart = kind;
+  }
 }

@@ -6,7 +6,10 @@
     </h3>
   </div>
 
-  <app-upload-file></app-upload-file>
+  <app-upload-file
+    (columnsChange)="handleColumnsChange($event)"
+    (rowsChange)="handleRowsChange($event)"
+  ></app-upload-file>
   <h3>Choose your Chart Style</h3>
 
   <div class="charts-list">
@@ -14,9 +17,17 @@
     <app-chart-type
       [icon]="chart.icon"
       [chartName]="chart.name"
+      [chartType]="chart.type"
+      (targetChange)="onChartTypeClicked($event)"
     ></app-chart-type>
     }
   </div>
+
+  <app-chart-builder
+    [columns]="columns"
+    [rows]="rows"
+    [selectedChart]="selectedChart"
+  ></app-chart-builder>
 
   <h3>AI Insights <lucide-icon [img]="Sparkles"></lucide-icon></h3>
   <app-aigeneration></app-aigeneration>

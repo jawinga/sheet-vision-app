@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import {
   Target,
   ChartKind,
@@ -42,13 +49,31 @@ type BuilderState = {
   templateUrl: './chart-builder.html',
   styleUrl: './chart-builder.scss',
 })
-export class ChartBuilder {
-  @Input() columns!: string[];
-  @Input() rows: Array<Record<string, CellValue>> = [];
-  @Output() targetType = new EventEmitter<Target>();
+export class ChartBuilder implements OnChanges {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.columns.length && this.rows.length && this.selectedChart) {
+      this.buildAndEmitTarget();
+    }
+  }
 
-  emitTarget() {
-    this.targetType.emit();
+  @Input() columns!: string[];
+  @Input() rows: Array<Record<string, unknown>> = [];
+  @Input() selectedChart!: ChartKind;
+  @Output() targetChange = new EventEmitter<Target>();
+
+  buildAndEmitTarget() {
+    const state: BuilderState = {
+      columns: this.columns,
+      rows: this.rows,
+    };
+
+    const result = this.changeTarget(this.selectedChart, state);
+
+    if (result.ok) {
+      this.targetChange.emit(result.target);
+    } else {
+      console.error('Chart build error:', result.error);
+    }
   }
 
   changeTarget(chart: ChartKind, state: BuilderState): BuildResult {
@@ -58,17 +83,14 @@ export class ChartBuilder {
         error: 'No rows found',
       };
 
-    if (!this.rows.length) return { ok: false, error: 'No rows found' };
+    if (!state.columns?.length)
+      return { ok: false, error: 'No columns found.' };
 
     //find first column
 
     const firstColumn = () => state.columns?.[0] ?? '';
     const firstNumeric = () =>
       this.pickFirstNumeric(state.rows, state.columns ?? []);
-
-    state.colorPalette = palette;
-    state.legendShow = true;
-    state.legendPosition = 'top';
 
     if (chart === 'doughnut') {
       const labelKey = state.labelKey ?? state.xKey ?? firstColumn();
@@ -112,6 +134,9 @@ export class ChartBuilder {
         data: state.rows,
         xKey,
         yKeys,
+        legendShow: state.legendShow ?? true,
+        legendPosition: state.legendPosition ?? 'top',
+        colorPalette: state.colorPalette ?? palette,
       };
 
       switch (chart) {
@@ -145,7 +170,14 @@ export class ChartBuilder {
           };
 
         default:
-          break;
+          return {
+            ok: true,
+            target: {
+              type: 'bar',
+              indexAxis: state.indexAxis ?? 'x',
+              ...base,
+            },
+          };
       }
 
       // xKey?: string;
