@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Target, ChartKind } from '../../shared/adapters/chart/adapter';
+import {
+  Target,
+  ChartKind,
+  TargetDoughnut,
+} from '../../shared/adapters/chart/adapter';
 import { CellValue } from '../../shared/helpers/cell-types';
 import { palette } from '../../shared/constants/palette';
 import {
@@ -19,6 +23,7 @@ type BuilderState = {
   xKey?: string;
   yKeys?: string[];
   indexAxis?: 'x' | 'y';
+  fill?: boolean;
 
   //doughnut
 
@@ -61,25 +66,92 @@ export class ChartBuilder {
     const firstNumeric = () =>
       this.pickFirstNumeric(state.rows, state.columns ?? []);
 
-    if (chart === 'doughnut') {
-      if (!state.labelKey) {
-        return {
-          ok: false,
-          error: 'No label key found',
-        };
-      }
-      if (!state.valueKey) {
-        return {
-          ok: false,
-          error: 'No value key found',
-        };
-      }
-    }
-
     state.colorPalette = palette;
     state.legendShow = true;
     state.legendPosition = 'top';
 
+    if (chart === 'doughnut') {
+      const labelKey = state.labelKey ?? state.xKey ?? firstColumn();
+      const valueKey = state.valueKey ?? state.yKeys?.[0] ?? firstNumeric();
+
+      if (!labelKey || !valueKey) {
+        return { ok: false, error: 'No label key nor valuey key' };
+      }
+
+      const target: TargetDoughnut = {
+        type: 'doughnut',
+        data: state.rows,
+        labelKey,
+        valueKey,
+      };
+
+      return {
+        ok: true,
+        target: target,
+      };
+    }
+
+    if (chart === 'area' || chart === 'bar' || chart === 'line') {
+      const xKey = state.xKey ?? state.labelKey ?? firstColumn();
+      const y0 = state.yKeys?.[0] ?? state.valueKey ?? firstNumeric();
+      const yKeys = y0 ? [y0] : [];
+
+      if (!xKey || yKeys.length === 0) {
+        return {
+          ok: false,
+          error: 'Pick an X column and at least one numeric Y column.',
+        };
+      }
+
+      //       type: 'bar';
+      // xKey: string;
+      // yKeys: [string] | string[];
+      // indexAxis?: 'x' | 'y';
+
+      const base = {
+        data: state.rows,
+        xKey,
+        yKeys,
+      };
+
+      switch (chart) {
+        case 'bar':
+          return {
+            ok: true,
+            target: {
+              type: 'bar',
+              indexAxis: state.indexAxis ?? 'x',
+              ...base,
+            },
+          };
+
+        case 'line':
+          return {
+            ok: true,
+            target: {
+              type: 'line',
+              ...base,
+            },
+          };
+
+        case 'area':
+          return {
+            ok: true,
+            target: {
+              type: 'area',
+              fill: true,
+              ...base,
+            },
+          };
+
+        default:
+          break;
+      }
+
+      // xKey?: string;
+      // yKeys?: string[];
+      // indexAxis?: 'x' | 'y';
+    }
     return {
       ok: false,
       error: 'error',
