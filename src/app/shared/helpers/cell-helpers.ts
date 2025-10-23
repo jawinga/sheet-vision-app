@@ -21,9 +21,14 @@ export function isStringLikeDate(str: string): boolean {
 }
 
 export function isStringLikeNumber(str: string): boolean {
-  const s = str.trim();
+  if (typeof str !== 'string') return false;
+
+  let s = str.trim();
   if (!s) return false;
-  if (!/^[+-]?\d+(\.\d+)?$/.test(s)) return false;
+
+  s = s.replace(/^[€$£¥₩₹]|[%]$/g, '');
+  s = s.replace(/(?<=\d)[, ](?=\d{3}(\D|$))/g, '');
+  if (!/^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(s)) return false;
   const n = Number(s);
   return Number.isFinite(n);
 }
