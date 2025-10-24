@@ -51,7 +51,6 @@ export class UploadFile {
   rows: Array<Record<string, CellValue>> = [];
   sampleRows: Array<Record<string, CellValue>> = [];
   warnings: string[] = [];
-
   name?: string;
   type?: string;
   window = window;

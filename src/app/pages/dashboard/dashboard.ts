@@ -47,10 +47,31 @@ export class Dashboard {
   }
 
   handleTargetChange(target: Target) {
+    console.log('Dashboard received target:', target);
     this.target = target;
+    console.log('Dashboard.target is now:', this.target);
   }
 
   onChartTypeClicked(kind: ChartKind) {
     this.selectedChart = kind;
+  }
+
+  get hasData(): boolean {
+    return this.columns?.length > 0 && this.rows?.length > 0;
+  }
+
+  get hasTarget(): boolean {
+    const result = !!this.target;
+    console.log(
+      'hasTarget getter called, result:',
+      result,
+      'target:',
+      this.target
+    );
+    return result;
+  }
+
+  get hasSelectedChart(): boolean {
+    return !!this.selectedChart;
   }
 }

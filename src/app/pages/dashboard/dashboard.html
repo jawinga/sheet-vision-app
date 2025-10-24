@@ -11,6 +11,8 @@
     (rowsChange)="handleRowsChange($event)"
   ></app-upload-file>
 
+  @if (hasData) {
+
   <h3>Choose your Chart Style</h3>
 
   <div class="charts-list">
@@ -25,14 +27,22 @@
     }
   </div>
 
+  }
+
+  <!--non visual -->
   <app-chart-builder
     [columns]="columns"
     [rows]="rows"
     [selectedChart]="selectedChart"
     (targetChange)="handleTargetChange($event)"
   ></app-chart-builder>
+
+  @if (hasData && hasTarget && hasSelectedChart) {
   <app-chart [target]="target"></app-chart>
 
+  } @if (hasData) {
   <h3>AI Insights <lucide-icon [img]="Sparkles"></lucide-icon></h3>
   <app-aigeneration></app-aigeneration>
+
+  }
 </div>
