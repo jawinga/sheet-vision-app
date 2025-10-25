@@ -1,5 +1,5 @@
 export const palette = [
-  '#AECBFA',
+  '#f50000ff',
   '#FAD7A0',
   '#F9B3B3',
   '#C9E4DE',

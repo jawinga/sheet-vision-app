@@ -27,9 +27,21 @@
     }
   </div>
 
-  <p>Select the X Axis</p>
+  @if (hasData && hasSelectedChart) {
 
-  } @if (hasData) {
+  <p>Group duplicate values?</p>
+  <input type="checkbox" [(ngModel)]="groupDuplicates" />
+
+  @if (groupDuplicates) {
+  <p>Aggregation type:</p>
+  <select [(ngModel)]="aggregationType">
+    <option selected value="avg">Average</option>
+    <option value="sum">Sum</option>
+    <option value="count">Count</option>
+  </select>
+
+  } } } @if (hasData && hasSelectedChart) {
+  <p>Select the X Axis</p>
 
   <div class="column-choose">
     @for (column of columns; track $index) {
@@ -42,11 +54,11 @@
     }
   </div>
 
+  } @if (hasData && hasSelectedChart) {
   <p>Select the Y Axis</p>
 
-  } @if (hasData) {
   <div class="column-choose">
-    @for (column of columns; track $index) {
+    @for (column of numericColumns; track $index) {
     <app-choose-column
       (columnSelected)="handleYColumnSelected($event)"
       [columnName]="column"

@@ -13,6 +13,7 @@ import {
 } from '../../shared/adapters/chart/adapter';
 import { palette } from '../../shared/constants/palette';
 import { isStringLikeNumber } from '../../shared/helpers/cell-helpers';
+import { isColumnNumericish } from '../../shared/helpers/row-helpers';
 
 type BuildOk = { ok: true; target: Target };
 type BuildErr = { ok: false; error: string };
@@ -69,6 +70,14 @@ export class ChartBuilder implements OnChanges {
   @Output() targetChange = new EventEmitter<Target>();
 
   buildAndEmitTarget() {
+    console.log('Building with:', {
+      xColumn: this.xColumn,
+      yColumn: this.yColumn,
+      selectedChart: this.selectedChart,
+      columnsAvailable: this.columns,
+      rowCount: this.rows.length,
+    });
+
     const state: BuilderState = {
       columns: this.columns,
       rows: this.rows,
@@ -199,42 +208,12 @@ export class ChartBuilder implements OnChanges {
     };
   }
 
-  private isColumnNumericish(
-    rows: Array<Record<string, unknown>>,
-    column: string
-  ): boolean {
-    let ratio: number = 0;
-    let numericCount: number = 0;
-    let nonNumericCount: number = 0;
-    const minimumObserved = 3;
-    const sample = Math.min(10, rows.length);
-
-    for (let i = 0; i < sample; i++) {
-      const val = rows[i]?.[column];
-      if (typeof val === 'number' && Number.isFinite(val)) {
-        numericCount += 1;
-      } else if (typeof val === 'string' && isStringLikeNumber(val)) {
-        numericCount += 1;
-      } else if (val === undefined || val === null || val === ''.trim()) {
-        continue;
-      } else {
-        nonNumericCount += 1;
-      }
-    }
-    const observed = numericCount + nonNumericCount;
-
-    if (observed < minimumObserved) return false;
-
-    ratio = numericCount / observed;
-    return ratio >= 0.7;
-  }
-
   private pickFirstNumeric(
     rows: Array<Record<string, unknown>>,
     columns: string[]
   ): string | undefined {
     for (const col of columns) {
-      if (this.isColumnNumericish(rows, col)) return col;
+      if (isColumnNumericish(rows, col)) return col;
     }
     return undefined;
   }

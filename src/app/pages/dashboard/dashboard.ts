@@ -7,7 +7,8 @@ import { ChartKind, Target } from '../../shared/adapters/chart/adapter';
 import { ChartBuilder } from '../../components/chart-builder/chart-builder';
 import { Chart } from '../../components/chart/chart';
 import { ChooseColumn } from '../../components/choose-column/choose-column';
-
+import { isColumnNumericish } from '../../shared/helpers/row-helpers';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -18,6 +19,7 @@ import { ChooseColumn } from '../../components/choose-column/choose-column';
     ChartBuilder,
     Chart,
     ChooseColumn,
+    FormsModule,
   ],
   standalone: true,
   templateUrl: './dashboard.html',
@@ -31,13 +33,16 @@ export class Dashboard {
     { icon: 'chart4', name: 'Doughnut', type: 'doughnut' },
   ] as const;
 
+  aggregationType: 'sum' | 'avg' | 'count' = 'avg';
+
   readonly Sparkles = Sparkles;
   selectedChart!: ChartKind;
   columns!: string[];
   rows!: Array<Record<string, unknown>>;
   target!: Target;
-  selectedXColumn?: string;
-  selectedYColumn?: string;
+  selectedXColumn!: string;
+  selectedYColumn!: string;
+  groupDuplicates: boolean = false;
 
   handleXColumnSelected(columnName: string) {
     console.log('X column clicked:', columnName);
@@ -73,6 +78,10 @@ export class Dashboard {
     this.selectedChart = kind;
   }
 
+  // aggregateData(): Array<Record<string, unknown>> {
+  //   if (!this.groupDuplicates) return this.rows;
+  // }
+
   get hasData(): boolean {
     return this.columns?.length > 0 && this.rows?.length > 0;
   }
@@ -90,5 +99,21 @@ export class Dashboard {
 
   get hasSelectedChart(): boolean {
     return !!this.selectedChart;
+  }
+
+  get hasSelectedY(): boolean {
+    return this.selectedYColumn?.length > 0;
+  }
+
+  get hasSelectedX(): boolean {
+    return this.selectedXColumn?.length > 0;
+  }
+
+  get numericColumns(): string[] {
+    if (!this.columns || !this.rows) {
+      return [];
+    }
+
+    return this.columns.filter((col) => isColumnNumericish(this.rows, col));
   }
 }
