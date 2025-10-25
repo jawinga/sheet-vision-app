@@ -11,12 +11,8 @@ import {
   ChartKind,
   TargetDoughnut,
 } from '../../shared/adapters/chart/adapter';
-import { CellValue } from '../../shared/helpers/cell-types';
 import { palette } from '../../shared/constants/palette';
-import {
-  isStringLikeNumber,
-  hasValue,
-} from '../../shared/helpers/cell-helpers';
+import { isStringLikeNumber } from '../../shared/helpers/cell-helpers';
 
 type BuildOk = { ok: true; target: Target };
 type BuildErr = { ok: false; error: string };
@@ -68,12 +64,16 @@ export class ChartBuilder implements OnChanges {
   @Input() columns!: string[];
   @Input() rows: Array<Record<string, unknown>> = [];
   @Input() selectedChart!: ChartKind;
+  @Input() xColumn?: string;
+  @Input() yColumn?: string;
   @Output() targetChange = new EventEmitter<Target>();
 
   buildAndEmitTarget() {
     const state: BuilderState = {
       columns: this.columns,
       rows: this.rows,
+      xKey: this.xColumn,
+      yKeys: this.yColumn ? [this.yColumn] : undefined,
     };
 
     const result = this.changeTarget(this.selectedChart, state);

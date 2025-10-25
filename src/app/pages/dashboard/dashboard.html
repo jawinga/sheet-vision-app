@@ -27,6 +27,34 @@
     }
   </div>
 
+  <p>Select the X Axis</p>
+
+  } @if (hasData) {
+
+  <div class="column-choose">
+    @for (column of columns; track $index) {
+    <app-choose-column
+      (columnSelected)="handleXColumnSelected($event)"
+      [columnName]="column"
+      [isSelected]="selectedXColumn === column"
+    ></app-choose-column>
+
+    }
+  </div>
+
+  <p>Select the Y Axis</p>
+
+  } @if (hasData) {
+  <div class="column-choose">
+    @for (column of columns; track $index) {
+    <app-choose-column
+      (columnSelected)="handleYColumnSelected($event)"
+      [columnName]="column"
+      [isSelected]="selectedYColumn === column"
+    ></app-choose-column>
+
+    }
+  </div>
   }
 
   <!--non visual -->
@@ -34,6 +62,8 @@
     [columns]="columns"
     [rows]="rows"
     [selectedChart]="selectedChart"
+    [yColumn]="selectedYColumn"
+    [xColumn]="selectedXColumn"
     (targetChange)="handleTargetChange($event)"
   ></app-chart-builder>
 

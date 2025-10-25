@@ -6,6 +6,7 @@ import { AIGeneration } from '../../components/aigeneration/aigeneration';
 import { ChartKind, Target } from '../../shared/adapters/chart/adapter';
 import { ChartBuilder } from '../../components/chart-builder/chart-builder';
 import { Chart } from '../../components/chart/chart';
+import { ChooseColumn } from '../../components/choose-column/choose-column';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ import { Chart } from '../../components/chart/chart';
     AIGeneration,
     ChartBuilder,
     Chart,
+    ChooseColumn,
   ],
   standalone: true,
   templateUrl: './dashboard.html',
@@ -28,11 +30,26 @@ export class Dashboard {
     { icon: 'chart3', name: 'Line', type: 'line' },
     { icon: 'chart4', name: 'Doughnut', type: 'doughnut' },
   ] as const;
+
   readonly Sparkles = Sparkles;
   selectedChart!: ChartKind;
   columns!: string[];
   rows!: Array<Record<string, unknown>>;
   target!: Target;
+  selectedXColumn?: string;
+  selectedYColumn?: string;
+
+  handleXColumnSelected(columnName: string) {
+    console.log('X column clicked:', columnName);
+
+    this.selectedXColumn = columnName;
+    console.log('selectedXColumn is now:', this.selectedXColumn);
+  }
+  handleYColumnSelected(columnName: string) {
+    console.log('Y column clicked:', columnName);
+    this.selectedYColumn = columnName;
+    console.log('selectedYColumn is now:', this.selectedYColumn);
+  }
 
   handleUploadData(columns: string[], rows: Array<Record<string, unknown>>) {
     this.columns = columns;
