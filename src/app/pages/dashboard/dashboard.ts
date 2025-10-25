@@ -9,6 +9,8 @@ import { Chart } from '../../components/chart/chart';
 import { ChooseColumn } from '../../components/choose-column/choose-column';
 import { isColumnNumericish } from '../../shared/helpers/row-helpers';
 import { FormsModule } from '@angular/forms';
+import _ from 'lodash';
+
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -43,17 +45,66 @@ export class Dashboard {
   selectedXColumn!: string;
   selectedYColumn!: string;
   groupDuplicates: boolean = false;
+  processedColumns: string[] = [];
+  processedRows: Array<Record<string, unknown>> = [];
+
+  aggregateValues(
+    rows: Array<Record<string, unknown>>,
+    column: string,
+    type: 'sum' | 'avg' | 'count'
+  ) {
+    switch (type) {
+      case 'sum':
+        return _.sumBy(rows, column);
+      case 'count':
+        return rows.length;
+
+      case 'avg':
+        return _.meanBy(rows, column);
+    }
+  }
+
+  aggregateData(): Array<Record<string, unknown>> {
+    const grouped = _.groupBy(this.rows, this.selectedXColumn);
+
+    const aggregated = _.map(grouped, (groupRows, xValue) => {
+      return {
+        [this.selectedXColumn]: xValue,
+        [this.selectedYColumn]: this.aggregateValues(
+          groupRows,
+          this.selectedYColumn,
+          this.aggregationType
+        ),
+      };
+    });
+
+    return aggregated;
+  }
 
   handleXColumnSelected(columnName: string) {
-    console.log('X column clicked:', columnName);
-
     this.selectedXColumn = columnName;
-    console.log('selectedXColumn is now:', this.selectedXColumn);
+    this.updateChartData(); // Recalculate once
+  }
+
+  private updateChartData() {
+    if (!this.columns?.length || !this.rows?.length) {
+      this.processedColumns = [];
+      this.processedRows = [];
+      return;
+    }
+
+    if (!this.groupDuplicates) {
+      this.processedColumns = this.columns;
+      this.processedRows = this.rows;
+      return;
+    }
+
+    this.processedColumns = [this.selectedXColumn, this.selectedYColumn];
+    this.processedRows = this.aggregateData();
   }
   handleYColumnSelected(columnName: string) {
-    console.log('Y column clicked:', columnName);
     this.selectedYColumn = columnName;
-    console.log('selectedYColumn is now:', this.selectedYColumn);
+    this.updateChartData();
   }
 
   handleUploadData(columns: string[], rows: Array<Record<string, unknown>>) {
@@ -62,10 +113,12 @@ export class Dashboard {
 
   handleColumnsChange(columns: string[]) {
     this.columns = columns;
+    this.updateChartData();
   }
 
   handleRowsChange(rows: Array<Record<string, unknown>>) {
     this.rows = rows;
+    this.updateChartData();
   }
 
   handleTargetChange(target: Target) {
@@ -76,6 +129,14 @@ export class Dashboard {
 
   onChartTypeClicked(kind: ChartKind) {
     this.selectedChart = kind;
+  }
+
+  onGroupDuplicatesChange() {
+    this.updateChartData();
+  }
+
+  onAggregationTypeChange() {
+    this.updateChartData();
   }
 
   // aggregateData(): Array<Record<string, unknown>> {
@@ -105,6 +166,13 @@ export class Dashboard {
     return this.selectedYColumn?.length > 0;
   }
 
+  get dataForChart(): Array<Record<string, unknown>> {
+    if (!this.groupDuplicates) {
+      return this.rows;
+    }
+    return this.aggregateData();
+  }
+
   get hasSelectedX(): boolean {
     return this.selectedXColumn?.length > 0;
   }
@@ -115,5 +183,12 @@ export class Dashboard {
     }
 
     return this.columns.filter((col) => isColumnNumericish(this.rows, col));
+  }
+
+  get columnsForChart(): string[] {
+    if (!this.groupDuplicates) {
+      return this.columns;
+    }
+    return [this.selectedXColumn, this.selectedYColumn];
   }
 }

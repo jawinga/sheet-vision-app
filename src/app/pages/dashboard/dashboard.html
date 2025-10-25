@@ -30,11 +30,18 @@
   @if (hasData && hasSelectedChart) {
 
   <p>Group duplicate values?</p>
-  <input type="checkbox" [(ngModel)]="groupDuplicates" />
+  <input
+    type="checkbox"
+    [(ngModel)]="groupDuplicates"
+    (ngModelChange)="onGroupDuplicatesChange()"
+  />
 
   @if (groupDuplicates) {
   <p>Aggregation type:</p>
-  <select [(ngModel)]="aggregationType">
+  <select
+    [(ngModel)]="aggregationType"
+    (ngModelChange)="onAggregationTypeChange()"
+  >
     <option selected value="avg">Average</option>
     <option value="sum">Sum</option>
     <option value="count">Count</option>
@@ -71,8 +78,8 @@
 
   <!--non visual -->
   <app-chart-builder
-    [columns]="columns"
-    [rows]="rows"
+    [columns]="processedColumns"
+    [rows]="processedRows"
     [selectedChart]="selectedChart"
     [yColumn]="selectedYColumn"
     [xColumn]="selectedXColumn"
