@@ -10,10 +10,11 @@ import {
 import { Chart as ChartJS, ChartConfiguration } from 'chart.js/auto';
 import { Target } from '../../shared/adapters/chart/adapter';
 import { Adapter } from '../../shared/adapters/chart/adapter';
+import { Cta } from '../cta/cta';
 
 @Component({
   selector: 'app-chart',
-  imports: [],
+  imports: [Cta],
   templateUrl: './chart.html',
   styleUrl: './chart.scss',
 })
@@ -63,5 +64,17 @@ export class Chart implements AfterViewInit, OnChanges {
       this.chartElement.nativeElement as HTMLCanvasElement,
       adapterResult.value
     );
+  }
+
+  exportAsPNG() {
+    if (!this.chartInstance) return;
+
+    const canvas = this.chartInstance.canvas;
+    const url = canvas.toDataURL('image/png');
+
+    const link = document.createElement('a');
+    link.download = 'chart.png';
+    link.href = url;
+    link.click();
   }
 }

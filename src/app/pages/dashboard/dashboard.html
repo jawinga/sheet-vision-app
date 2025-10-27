@@ -44,7 +44,7 @@
     ></app-tool-tip>
   </div>
 
-  <div class="column-choose">
+  <div class="column-choose-list">
     @for (column of columns; track $index) {
     <app-choose-column
       (columnSelected)="handleXColumnSelected($event)"
@@ -65,7 +65,7 @@
     ></app-tool-tip>
   </div>
 
-  <div class="column-choose">
+  <div class="column-choose-list">
     @for (column of numericColumns; track $index) {
     <app-choose-column
       (columnSelected)="handleYColumnSelected($event)"

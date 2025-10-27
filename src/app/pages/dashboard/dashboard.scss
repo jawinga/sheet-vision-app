@@ -58,21 +58,61 @@ h3 {
   gap: 3rem;
 }
 
-.column-choose {
+.column-choose-list {
   display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 3rem;
-  margin-top: 4rem;
-  margin-bottom: 4rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: clamp(0.5rem, 1.2vw, 1rem); /* responsive gap */
+  max-height: 12rem; /* slightly larger cap for desktop */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem 0.5rem 0.5rem 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* smoother on iOS */
 
+  /* Subtle fading mask for long lists */
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 90%,
+    rgba(0, 0, 0, 0) 100%
+  );
+
+  /* Smooth custom scrollbar for modern browsers */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-accent, 0.4);
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba($color-accent, 0.7);
+  }
+
+  /* Medium screens (tablets) */
+  @media (max-width: 1024px) {
+    max-height: 10rem;
+    justify-content: center;
+  }
+
+  /* Small screens (mobile) */
   @media (max-width: 768px) {
     flex-wrap: wrap;
-    gap: 2rem;
+    justify-content: center;
+    gap: clamp(0.5rem, 2vw, 0.75rem);
+    max-height: 8.5rem; /* reduce height */
+    padding-right: 0.25rem;
+  }
+
+  /* Very small phones */
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    max-height: 7rem;
   }
 }
 
-// Option Description
 .option-description {
   padding: $spacing-sm $spacing-md;
   background: rgba($color-accent, 0.05);
@@ -167,8 +207,8 @@ h3 {
   cursor: pointer;
   position: relative;
   user-select: none;
-  margin-top: 5rem;
-  margin-bottom: 5rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   transition: all $transition-fast;
 
   &:hover {
