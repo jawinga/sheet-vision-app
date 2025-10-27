@@ -4,6 +4,9 @@
   padding-left: 2rem;
   padding-right: 2rem;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }

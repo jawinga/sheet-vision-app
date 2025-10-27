@@ -1,5 +1,38 @@
 @use "../../../styles/variables" as *;
 
+.app-content {
+  width: 100%;
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  padding: 4rem $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    padding: 3rem $spacing-lg;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem $spacing-md;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem $spacing-sm;
+  }
+}
+
+.upload-box,
+.charts-list,
+.file {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
 .dashboard-title {
   align-items: center;
   justify-content: center;
@@ -63,23 +96,23 @@ h3 {
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: clamp(0.5rem, 1.2vw, 1rem); /* responsive gap */
-  max-height: 12rem; /* slightly larger cap for desktop */
+  gap: clamp(0.5rem, 1.2vw, 1rem);
+  max-height: 12rem;
   overflow-y: auto;
+  max-width: 1200px;
+
   overflow-x: hidden;
   padding: 0.5rem 0.5rem 0.5rem 0;
   box-sizing: border-box;
   scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch; /* smoother on iOS */
+  -webkit-overflow-scrolling: touch;
 
-  /* Subtle fading mask for long lists */
   mask-image: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 1) 90%,
     rgba(0, 0, 0, 0) 100%
   );
 
-  /* Smooth custom scrollbar for modern browsers */
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -91,22 +124,19 @@ h3 {
     background: rgba($color-accent, 0.7);
   }
 
-  /* Medium screens (tablets) */
   @media (max-width: 1024px) {
     max-height: 10rem;
     justify-content: center;
   }
 
-  /* Small screens (mobile) */
   @media (max-width: 768px) {
     flex-wrap: wrap;
     justify-content: center;
     gap: clamp(0.5rem, 2vw, 0.75rem);
-    max-height: 8.5rem; /* reduce height */
+    max-height: 8.5rem;
     padding-right: 0.25rem;
   }
 
-  /* Very small phones */
   @media (max-width: 480px) {
     gap: 0.5rem;
     max-height: 7rem;

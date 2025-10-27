@@ -1,5 +1,11 @@
 @use "styles/variables" as *;
 
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
 body {
   background-color: $color-bg-dark;
   font-family: "Manrope", sans-serif;
