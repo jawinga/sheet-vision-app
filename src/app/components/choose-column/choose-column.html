@@ -1,3 +1,8 @@
-<button (click)="emitColumn()" [class.selected]="isSelected">
-  <span>{{ columnName }}</span>
+<button
+  (click)="emitColumn()"
+  [class.selected]="isSelected"
+  class="column-button"
+>
+  <span class="column-name">{{ columnName }}</span>
+  <span class="selection-indicator"></span>
 </button>

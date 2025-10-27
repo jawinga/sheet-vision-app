@@ -28,29 +28,15 @@
     }
   </div>
 
-  @if (hasData && hasSelectedChart) {
-
-  <p>Group duplicate values?</p>
-  <input
-    type="checkbox"
-    [(ngModel)]="groupDuplicates"
-    (ngModelChange)="onGroupDuplicatesChange()"
-  />
-
-  @if (groupDuplicates) {
-  <p>Aggregation type:</p>
-  <select
-    [(ngModel)]="aggregationType"
-    (ngModelChange)="onAggregationTypeChange()"
-  >
-    <option selected value="avg">Average</option>
-    <option value="sum">Sum</option>
-    <option value="count">Count</option>
-  </select>
-
-  } } } @if (hasData && hasSelectedChart) {
+  @if (hasData && hasSelectedChart) { } } @if (hasData && hasSelectedChart) {
   <div
-    style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem"
+    style="
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 3rem;
+    "
   >
     <p>Select Category Column (X-Axis)</p>
     <app-tool-tip
@@ -73,7 +59,7 @@
   <div
     style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem"
   >
-    <p>Select Category Column (Y-Axis)</p>
+    <p>Select Value Column (Y-Axis)</p>
     <app-tool-tip
       [text]="'Show numeric values verticaly: sales, age, count...'"
     ></app-tool-tip>
@@ -89,6 +75,63 @@
 
     }
   </div>
+
+  <label class="checkbox-container">
+    <input
+      type="checkbox"
+      class="checkbox-input"
+      [(ngModel)]="groupDuplicates"
+      (ngModelChange)="onGroupDuplicatesChange()"
+    />
+    <span class="checkbox-custom"></span>
+    <span class="checkbox-label">Group duplicate values?</span>
+  </label>
+
+  @if (groupDuplicates) {
+  <label class="select-label">Aggregation type:</label>
+  <div class="select-wrapper">
+    <select
+      class="select-input"
+      [(ngModel)]="aggregationType"
+      (ngModelChange)="onAggregationTypeChange()"
+    >
+      <option value="avg">Average</option>
+      <option value="sum">Sum</option>
+      <option value="count">Count</option>
+    </select>
+    <svg
+      class="select-arrow"
+      width="12"
+      height="8"
+      viewBox="0 0 12 8"
+      fill="none"
+    >
+      <path
+        d="M1 1L6 6L11 1"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
+  </div>
+
+  }
+
+  <div class="option-description">
+    @if (aggregationType === 'avg') {
+    <p>
+      <strong>Average:</strong> Calculates the mean value of all grouped numeric
+      values
+    </p>
+    } @if (aggregationType === 'sum') {
+    <p><strong>Sum:</strong> Adds together all grouped numeric values</p>
+    } @if (aggregationType === 'count') {
+    <p>
+      <strong>Count:</strong> Counts the number of occurrences in each group
+    </p>
+    }
+  </div>
+
   }
 
   <!--non visual -->
