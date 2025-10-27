@@ -1,6 +1,13 @@
 @use "../../../styles/variables" as *;
 
 .chart-type {
+  @media (max-width: 768px) {
+    max-width: min(100%, 300px);
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+  }
+
   padding: $spacing-lg;
   display: flex;
   flex-direction: column;
@@ -15,8 +22,8 @@
   );
   border-radius: $radius-md;
   height: 140px;
-  width: 100%;
   max-width: 200px;
+  width: 150px;
   color: $color-text-primary;
   cursor: pointer;
   transition: all $transition-base;

@@ -23,10 +23,12 @@
     (click)="fileInput.click()"
   ></app-cta>
   } @if (uploadState === 'uploading') {
-  <p class="uploading-text">Uploading...</p>
-  <div class="loader">
-    <app-loading-animation></app-loading-animation>
+  <div>
+    <div class="loader">
+      <app-loading-animation></app-loading-animation>
+    </div>
   </div>
+
   } @if(uploadState === 'success') {
 
   <div class="file">
@@ -39,10 +41,10 @@
       >
 
       @if (selectedFile) {
-      <span>Name: {{ getFileNameWithoutExtension(selectedFile) }}</span>
-      <span>Type: {{ getFileTypeWithoutName(selectedFile) }}</span>
+      <span>{{ getFileNameWithoutExtension(selectedFile) }}</span>
+      <span>{{ getFileTypeWithoutName(selectedFile) }}</span>
       }
-      <span>Size: {{ formatFileSize(selectedFile?.size || 0) }}</span>
+      <span>{{ formatFileSize(selectedFile?.size || 0) }}</span>
     </section>
   </div>
   } @if (uploadState === 'error') {
@@ -59,7 +61,7 @@
 
   } @if (parseState === 'parsed' && uploadState === 'success') {
 
-  <app-table
+  <!-- <app-table
     [sheetName]="sheetName"
     [columns]="columns"
     [rowCount]="rowCount"
@@ -70,7 +72,7 @@
     [mergeRanges]="lastParseResult?.mergeRanges || []"
     [startRow]="lastParseResult?.startRow ?? 0"
     [headerDepth]="lastParseResult?.headerDepth ?? 1"
-  ></app-table>
+  ></app-table> -->
 
   @if (sheetNames.length > 1) {
   <div class="sheet-options">

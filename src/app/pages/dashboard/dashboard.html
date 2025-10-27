@@ -9,9 +9,10 @@
   <app-upload-file
     (columnsChange)="handleColumnsChange($event)"
     (rowsChange)="handleRowsChange($event)"
+    (uploadStatusChange)="handleUploadStatus($event)"
   ></app-upload-file>
 
-  @if (hasData) {
+  @if (hasData && uploadState === 'success') {
 
   <h3>Choose your Chart Style</h3>
 
@@ -48,7 +49,14 @@
   </select>
 
   } } } @if (hasData && hasSelectedChart) {
-  <p>Select the X Axis</p>
+  <div
+    style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem"
+  >
+    <p>Select Category Column (X-Axis)</p>
+    <app-tool-tip
+      [text]="'Show values horizontally: cities, names, dates...'"
+    ></app-tool-tip>
+  </div>
 
   <div class="column-choose">
     @for (column of columns; track $index) {
@@ -62,7 +70,14 @@
   </div>
 
   } @if (hasData && hasSelectedChart) {
-  <p>Select the Y Axis</p>
+  <div
+    style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem"
+  >
+    <p>Select Category Column (Y-Axis)</p>
+    <app-tool-tip
+      [text]="'Show numeric values verticaly: sales, age, count...'"
+    ></app-tool-tip>
+  </div>
 
   <div class="column-choose">
     @for (column of numericColumns; track $index) {
@@ -90,8 +105,8 @@
   <app-chart [target]="target"></app-chart>
 
   } @if (hasData) {
-  <h3>AI Insights <lucide-icon [img]="Sparkles"></lucide-icon></h3>
-  <app-aigeneration></app-aigeneration>
+  <!-- <h3>AI Insights <lucide-icon [img]="Sparkles"></lucide-icon></h3>
+  <app-aigeneration></app-aigeneration> -->
 
   }
 </div>

@@ -1,7 +1,7 @@
 <mat-toolbar class="nav-bar">
   <div class="nav-bar__left-section">
     <lucide-icon [img]="Logo"></lucide-icon>
-    <h3>Data Insights</h3>
+    <h3 class="nav-bar__title">Data Insights</h3>
   </div>
   <span class="spacer"></span>
   <div class="nav-bar__right-section">
@@ -10,16 +10,15 @@
         [img]="FolderSearch"
         class="nav-bar__icon nav-bar__icon--insights"
       ></lucide-icon>
-      Your Insights
+      <span class="nav-bar__button-text">Your Insights</span>
     </a>
 
-    <!-- CTA is its own block -->
-    <app-cta
+    <!-- <app-cta
       label="Upload File"
       icon="plus"
       color="accent"
       class="nav-bar__upload"
-    ></app-cta>
+    ></app-cta> -->
 
     <button
       mat-icon-button

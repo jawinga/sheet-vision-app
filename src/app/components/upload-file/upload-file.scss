@@ -1,6 +1,6 @@
 @use "../../../styles/variables" as *;
 
-div {
+.upload-box {
   box-sizing: border-box;
   padding: 5rem;
   display: flex;
@@ -11,6 +11,11 @@ div {
   background-color: $color-bg-card;
   width: min(70%, 920px);
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 3rem;
+    width: min(95%, 700px);
+  }
 }
 
 .first-text {
@@ -18,6 +23,9 @@ div {
   font-weight: 600;
   color: $color-text-primary;
   margin-top: 1rem;
+  @media (max-width: 768px) {
+    text-align: center;
+  }
 }
 
 .second-text {
@@ -31,10 +39,29 @@ div {
   background-color: lighten($color-bg-card, 7%);
 }
 
+.file {
+  width: min(70%, 920px);
+  margin: 0 auto;
+  @media (max-width: 768px) {
+    width: min(95%, 700px);
+  }
+}
+
 .file-info {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  justify-content: center;
   flex-direction: row;
+  gap: 0.75rem;
+
+  span {
+    width: fit-content;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 .sheet-options {

@@ -1,0 +1,52 @@
+@use "../../../styles/variables" as *;
+
+:host {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.info-icon {
+  color: rgba($color-text-muted, 0.9);
+  width: 20px;
+  height: 20px;
+  transition: color 0.25s ease, transform 0.25s ease;
+
+  &:hover {
+    color: $color-accent;
+    transform: scale(1.1);
+  }
+}
+
+.tooltip-text {
+  position: absolute;
+  bottom: calc(100% + 0.6rem);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+
+  background: rgba($color-bg-elevated, 0.95);
+  color: $color-text-primary;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  border-radius: $radius-sm;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -4px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+
+  z-index: 20;
+}
+
+/* When the tooltip is visible */
+:host(:hover) .tooltip-text {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -8px);
+}

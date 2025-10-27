@@ -16,6 +16,8 @@ import {
 } from '../../services/excel-parser/excel-parser-service';
 import { CellValue } from '../../shared/helpers/cell-types';
 
+type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
+
 @Component({
   selector: 'app-upload-file',
   standalone: true,
@@ -41,6 +43,7 @@ export class UploadFile {
 
   @Output() columnsChange = new EventEmitter<string[]>();
   @Output() rowsChange = new EventEmitter<Array<Record<string, unknown>>>();
+  @Output() uploadStatusChange = new EventEmitter<UploadStatus>();
 
   sheetName: string = '';
   sheetNames: string[] = [];
@@ -76,11 +79,15 @@ export class UploadFile {
 
     if (!file) {
       this.uploadState = 'error';
+      this.uploadStatusChange.emit(this.uploadState);
+
       return;
     }
 
     if (!resultValid) {
       this.uploadState = 'error';
+      this.uploadStatusChange.emit(this.uploadState);
+
       return;
     }
 
@@ -92,13 +99,16 @@ export class UploadFile {
 
   startUpload(file: File) {
     this.uploadState = 'uploading';
+    this.uploadStatusChange.emit(this.uploadState);
 
     this.fileService.upload(file).subscribe({
       next: () => {
         this.uploadState = 'success';
+        this.uploadStatusChange.emit(this.uploadState);
       },
       error: () => {
         this.uploadState = 'error';
+        this.uploadStatusChange.emit(this.uploadState);
       },
     });
   }
@@ -124,6 +134,8 @@ export class UploadFile {
 
     if (file.type && !allowed.includes(file.type)) {
       this.uploadState = 'error';
+      this.uploadStatusChange.emit(this.uploadState);
+
       return;
     }
 
@@ -202,5 +214,9 @@ export class UploadFile {
         this.uploadState = 'idle';
         console.log('Error: ', err);
       });
+  }
+
+  sendUploadStatustoDash(): void {
+    this.uploadStatusChange.emit(this.uploadState);
   }
 }

@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { UploadFile } from '../../components/upload-file/upload-file';
 import { ChartType } from '../../components/chart-type/chart-type';
-import { LucideAngularModule, Sparkles } from 'lucide-angular';
+import { LucideAngularModule, Sparkles, Info } from 'lucide-angular';
 import { AIGeneration } from '../../components/aigeneration/aigeneration';
 import { ChartKind, Target } from '../../shared/adapters/chart/adapter';
 import { ChartBuilder } from '../../components/chart-builder/chart-builder';
@@ -9,7 +9,10 @@ import { Chart } from '../../components/chart/chart';
 import { ChooseColumn } from '../../components/choose-column/choose-column';
 import { isColumnNumericish } from '../../shared/helpers/row-helpers';
 import { FormsModule } from '@angular/forms';
+import { ToolTip } from '../../components/tool-tip/tool-tip';
 import _ from 'lodash';
+
+type UploadState = 'idle' | 'uploading' | 'success' | 'error';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +25,7 @@ import _ from 'lodash';
     Chart,
     ChooseColumn,
     FormsModule,
+    ToolTip,
   ],
   standalone: true,
   templateUrl: './dashboard.html',
@@ -38,6 +42,7 @@ export class Dashboard {
   aggregationType: 'sum' | 'avg' | 'count' = 'avg';
 
   readonly Sparkles = Sparkles;
+  readonly Info = Info;
   selectedChart!: ChartKind;
   columns!: string[];
   rows!: Array<Record<string, unknown>>;
@@ -47,6 +52,9 @@ export class Dashboard {
   groupDuplicates: boolean = false;
   processedColumns: string[] = [];
   processedRows: Array<Record<string, unknown>> = [];
+  uploadState!: UploadState;
+
+  @HostListener('mouseover') onMouseEnter() {}
 
   aggregateValues(
     rows: Array<Record<string, unknown>>,
@@ -125,6 +133,10 @@ export class Dashboard {
     console.log('Dashboard received target:', target);
     this.target = target;
     console.log('Dashboard.target is now:', this.target);
+  }
+
+  handleUploadStatus(uploadState: UploadState): void {
+    this.uploadState = uploadState;
   }
 
   onChartTypeClicked(kind: ChartKind) {
