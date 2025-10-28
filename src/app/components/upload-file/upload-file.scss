@@ -1,5 +1,9 @@
 @use "../../../styles/variables" as *;
 
+.upload-container {
+  width: 100%;
+}
+
 .upload-box {
   box-sizing: border-box;
   padding: 5rem;
@@ -68,11 +72,78 @@
   }
 }
 
+.table-view {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
+
+.file-info-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .file-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $color-text-primary;
+  }
+
+  .file-meta {
+    font-size: 0.875rem;
+    color: $color-text-muted;
+  }
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .retry-icon {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
 .sheet-options {
   display: flex;
   gap: 1.5rem;
   flex-direction: row;
   border: 0;
+  margin-bottom: 1.5rem;
+  padding: 0 1.5rem;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
 }
 
 .showTable-button {
@@ -84,8 +155,8 @@
     transform 0.2s ease;
 
   &:hover {
-    color: $color-accent-hover;
-    text-decoration-color: $color-accent-hover;
+    color: brighten($color-accent-hover, 10%);
+    text-decoration-color: brighten($color-accent-hover, 10%);
   }
 
   &:active {

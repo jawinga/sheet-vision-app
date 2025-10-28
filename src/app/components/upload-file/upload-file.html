@@ -1,98 +1,117 @@
-<div
-  class="upload-box"
-  [class.dragover]="isDragOver"
-  (dragover)="onDragOver($event)"
-  (drop)="onDrop($event)"
-  (dragleave)="onDragLeave($event)"
->
-  @if (uploadState === 'idle') {
-
-  <lucide-icon
-    [img]="CloudUpload"
-    [size]="45"
-    [color]="'#ed1313'"
-  ></lucide-icon>
-  <p class="first-text">Drag and Drop your Excel file here</p>
-  <p class="second-text">or click to browse your files</p>
-
-  } @if (uploadState === 'idle') {
-  <input type="file" hidden (change)="onFileSelect($event)" #fileInput />
-  <app-cta
-    color="accent-hover"
-    label="Upload File"
-    (click)="fileInput.click()"
-  ></app-cta>
-  } @if (uploadState === 'uploading') {
-  <div>
-    <div class="loader">
-      <app-loading-animation></app-loading-animation>
-    </div>
-  </div>
-
-  } @if(uploadState === 'success') {
-
-  <div class="file">
-    <section class="file-info">
-      <lucide-icon
-        [img]="Retry"
-        [color]="'#ed1313'"
-        (click)="window.location.reload()"
-        >Retry upload</lucide-icon
-      >
-
-      @if (selectedFile) {
-      <span>{{ getFileNameWithoutExtension(selectedFile) }}</span>
-      <span>{{ getFileTypeWithoutName(selectedFile) }}</span>
-      }
-      <span>{{ formatFileSize(selectedFile?.size || 0) }}</span>
-    </section>
-    @if (!showTable) {
-    <button class="showTable-button" (click)="showTable = !showTable">
-      Show table
-    </button>
-
-    }
-  </div>
-  } @if (uploadState === 'error') {
-
-  <p class="error-text">
-    There was an error uploading the file. Please try again.
-  </p>
-  <lucide-icon
-    [img]="Retry"
-    [color]="'#ed1313'"
-    (click)="window.location.reload()"
-    >Retry upload</lucide-icon
+<div class="upload-container">
+  @if (!showTable) {
+  <div
+    class="upload-box"
+    [class.dragover]="isDragOver"
+    (dragover)="onDragOver($event)"
+    (drop)="onDrop($event)"
+    (dragleave)="onDragLeave($event)"
   >
-
-  } @if (parseState === 'parsed' && uploadState === 'success') {
-
-  <!-- <app-table
-    [sheetName]="sheetName"
-    [columns]="columns"
-    [rowCount]="rowCount"
-    [rows]="rows"
-    [sampleRows]="sampleRows"
-    [warnings]="warnings"
-    [headerRows]="lastParseResult?.headerRows || []"
-    [mergeRanges]="lastParseResult?.mergeRanges || []"
-    [startRow]="lastParseResult?.startRow ?? 0"
-    [headerDepth]="lastParseResult?.headerDepth ?? 1"
-  ></app-table> -->
-
-  @if (sheetNames.length > 1) {
-  <div class="sheet-options">
-    @for (name of sheetNames; track name; let i = $index) {
-
-    <app-sheet-button
-      [number]="i"
-      [label]="name"
-      [selected]="name === selectedSheetName"
-      (select)="onSelectSheet(name)"
+    @if (uploadState === 'idle') {
+    <lucide-icon
+      [img]="CloudUpload"
+      [size]="45"
+      [color]="'#ed1313'"
+    ></lucide-icon>
+    <p class="first-text">Drag and Drop your Excel file here</p>
+    <p class="second-text">or click to browse your files</p>
+    <input type="file" hidden (change)="onFileSelect($event)" #fileInput />
+    <app-cta
+      color="accent-hover"
+      label="Upload File"
+      (click)="fileInput.click()"
+    ></app-cta>
+    } @if (uploadState === 'uploading') {
+    <div>
+      <div class="loader">
+        <app-loading-animation></app-loading-animation>
+      </div>
+    </div>
+    } @if(uploadState === 'success') {
+    <div class="file">
+      <section class="file-info">
+        <lucide-icon
+          [img]="Retry"
+          [color]="'#ed1313'"
+          (click)="window.location.reload()"
+          >Retry upload</lucide-icon
+        >
+        @if (selectedFile) {
+        <span>{{ getFileNameWithoutExtension(selectedFile) }}</span>
+        <span>{{ getFileTypeWithoutName(selectedFile) }}</span>
+        }
+        <span>{{ formatFileSize(selectedFile?.size || 0) }}</span>
+      </section>
+      <button class="showTable-button" (click)="showTable = !showTable">
+        {{ showTable ? "Hide table" : "Show table" }}
+      </button>
+    </div>
+    } @if (uploadState === 'error') {
+    <p class="error-text">
+      There was an error uploading the file. Please try again.
+    </p>
+    <lucide-icon
+      [img]="Retry"
+      [color]="'#ed1313'"
+      (click)="window.location.reload()"
+      >Retry upload</lucide-icon
     >
-    </app-sheet-button>
-
     }
   </div>
-  } }
+  } @if (showTable && parseState === 'parsed' && uploadState === 'success') {
+  <div class="table-view">
+    <div class="table-header">
+      <div class="file-info-compact">
+        @if (selectedFile) {
+        <span class="file-name">{{
+          getFileNameWithoutExtension(selectedFile)
+        }}</span>
+        <span class="file-meta"
+          >{{ getFileTypeWithoutName(selectedFile) }} •
+          {{ formatFileSize(selectedFile?.size || 0) }}</span
+        >
+        }
+      </div>
+      <div class="table-actions">
+        <button class="showTable-button" (click)="showTable = !showTable">
+          Hide table
+        </button>
+        <lucide-icon
+          [img]="Retry"
+          [color]="'#ed1313'"
+          [size]="20"
+          (click)="window.location.reload()"
+          class="retry-icon"
+        ></lucide-icon>
+      </div>
+    </div>
+
+    @if (sheetNames.length > 1) {
+    <div class="sheet-options">
+      @for (name of sheetNames; track name; let i = $index) {
+      <app-sheet-button
+        [number]="i"
+        [label]="name"
+        [selected]="name === selectedSheetName"
+        (select)="onSelectSheet(name)"
+      >
+      </app-sheet-button>
+      }
+    </div>
+    }
+
+    <app-table
+      [sheetName]="sheetName"
+      [columns]="columns"
+      [rowCount]="rowCount"
+      [rows]="rows"
+      [sampleRows]="sampleRows"
+      [warnings]="warnings"
+      [headerRows]="lastParseResult?.headerRows || []"
+      [mergeRanges]="lastParseResult?.mergeRanges || []"
+      [startRow]="lastParseResult?.startRow ?? 0"
+      [headerDepth]="lastParseResult?.headerDepth ?? 1"
+    ></app-table>
+  </div>
+  }
 </div>
