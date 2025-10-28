@@ -46,6 +46,12 @@
       }
       <span>{{ formatFileSize(selectedFile?.size || 0) }}</span>
     </section>
+    @if (!showTable) {
+    <button class="showTable-button" (click)="showTable = !showTable">
+      Show table
+    </button>
+
+    }
   </div>
   } @if (uploadState === 'error') {
 

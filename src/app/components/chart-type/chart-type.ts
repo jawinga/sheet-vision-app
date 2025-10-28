@@ -2,14 +2,15 @@ import { Component, Input, EventEmitter, Output } from '@angular/core';
 import {
   LucideAngularModule,
   ChartColumnDecreasing,
-  ChartScatter,
   ChartPie,
   ChartArea,
   ChartCandlestick,
   CheckCheck,
+  ChartLine,
 } from 'lucide-angular';
 import { ChartKind } from '../../shared/adapters/chart/adapter';
 import { NgClass } from '@angular/common';
+import { Chart } from 'chart.js';
 
 type IconVariant = 'chart1' | 'chart2' | 'chart3' | 'chart4' | 'chart5';
 
@@ -23,9 +24,9 @@ type IconVariant = 'chart1' | 'chart2' | 'chart3' | 'chart4' | 'chart5';
 export class ChartType {
   private readonly IconMap = {
     chart1: ChartColumnDecreasing,
-    chart2: ChartScatter,
-    chart3: ChartPie,
-    chart4: ChartArea,
+    chart2: ChartArea,
+    chart3: ChartLine,
+    chart4: ChartPie,
     chart5: ChartCandlestick,
   };
 

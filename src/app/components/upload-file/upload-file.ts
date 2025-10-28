@@ -63,6 +63,7 @@ export class UploadFile {
   parseState: 'idle' | 'parseLoading' | 'parsed' | 'parseError' = 'idle';
   selectedFile?: File | null = null;
   lastParseResult?: ParseResult;
+  showTable: boolean = false;
 
   onSelectSheet(name: string) {
     if (!this.lastFile) return;
