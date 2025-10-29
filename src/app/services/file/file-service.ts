@@ -8,7 +8,7 @@ import { CellValue } from '../../shared/helpers/cell-types';
 })
 export class FileService {
   upload(file: File): Observable<any> {
-    const isSuccess = Math.random() > 0.2; // 80% success
+    const isSuccess = Math.random() > 0.0005; // 80% success
 
     if (isSuccess) {
       return of({ message: 'File uploaded successfully' }).pipe(delay(2000));
