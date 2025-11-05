@@ -17,15 +17,16 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
 	•	Design: Tailwind-inspired UI principles
 
  Live Demo
+ https://sheet-vision-app.vercel.app/
  
 <table>
   <tr>
-    <td><img src="./public/screenshots/screenshot1" width="100%"><br><sub>Dashboard View</sub></td>
-    <td><img src="./public/screenshots/screenshot2" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot1.png" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot2.png" width="100%"><br><sub>Dashboard View</sub></td>
   </tr>
   <tr>
-    <td><img src="./public/screenshots/screenshot3" width="100%"><br><sub>Dashboard View</sub></td>
-    <td><img src="./public/screenshots/screenshot4" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot3.png" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot4.png" width="100%"><br><sub>Dashboard View</sub></td>
   </tr>
 </table>
 
