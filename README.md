@@ -20,12 +20,12 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
  
 <table>
   <tr>
-    <td><img src="/public/screenshots/screenshot1" width="100%"><br><sub>Dashboard View</sub></td>
-    <td><img src="/public/screenshots/screenshot2" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot1" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot2" width="100%"><br><sub>Dashboard View</sub></td>
   </tr>
   <tr>
-    <td><img src="/public/screenshots/screenshot3" width="100%"><br><sub>Dashboard View</sub></td>
-    <td><img src="/public/screenshots/screenshot4" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot3" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot4" width="100%"><br><sub>Dashboard View</sub></td>
   </tr>
 </table>
 
