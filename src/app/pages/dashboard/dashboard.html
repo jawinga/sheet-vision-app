@@ -1,9 +1,12 @@
 <div>
   <div class="dashboard-title">
+    @if (!hasData) {
     <h2>Upload your Excel File</h2>
     <h3>
       Gain AI-powered insights and generate stunning charts from your data
     </h3>
+
+    }
   </div>
 
   <app-upload-file
@@ -87,7 +90,18 @@
     <span class="checkbox-label">Group duplicate values?</span>
   </label>
 
-  @if (groupDuplicates) {
+  @if(selectedChart === 'bar'){
+  <label class="checkbox-container">
+    <input
+      type="checkbox"
+      class="checkbox-input"
+      [(ngModel)]="isHorizontal"
+      (ngModelChange)="toggleOrientation()"
+    />
+    <span class="checkbox-custom"></span>
+    <span class="checkbox-label">Horizontal chart</span>
+  </label>
+  } @if (groupDuplicates) {
   <label class="select-label">Aggregation type:</label>
   <div class="select-wrapper">
     <select
@@ -139,6 +153,7 @@
     [selectedChart]="selectedChart"
     [yColumn]="selectedYColumn"
     [xColumn]="selectedXColumn"
+    [horizontal]="isHorizontal"
     (targetChange)="handleTargetChange($event)"
   ></app-chart-builder>
 

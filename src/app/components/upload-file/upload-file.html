@@ -15,7 +15,13 @@
     ></lucide-icon>
     <p class="first-text">Drag and Drop your Excel file here</p>
     <p class="second-text">or click to browse your files</p>
-    <input type="file" hidden (change)="onFileSelect($event)" #fileInput />
+    <input
+      type="file"
+      accept=".xlsx, .xls, .csv"
+      hidden
+      (change)="onFileSelect($event)"
+      #fileInput
+    />
     <app-cta
       color="accent-hover"
       label="Upload File"

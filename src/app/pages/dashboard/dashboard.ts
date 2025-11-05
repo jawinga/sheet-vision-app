@@ -1,4 +1,4 @@
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, HostListener, Output } from '@angular/core';
 import { UploadFile } from '../../components/upload-file/upload-file';
 import { ChartType } from '../../components/chart-type/chart-type';
 import { LucideAngularModule, Sparkles, Info } from 'lucide-angular';
@@ -10,6 +10,7 @@ import { ChooseColumn } from '../../components/choose-column/choose-column';
 import { isColumnNumericish } from '../../shared/helpers/row-helpers';
 import { FormsModule } from '@angular/forms';
 import { ToolTip } from '../../components/tool-tip/tool-tip';
+import { EventEmitter } from '@angular/core';
 import _ from 'lodash';
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error';
@@ -53,6 +54,8 @@ export class Dashboard {
   processedColumns: string[] = [];
   processedRows: Array<Record<string, unknown>> = [];
   uploadState!: UploadState;
+  isHorizontal = false;
+  @Output() horizontal = new EventEmitter<boolean>();
 
   @HostListener('mouseover') onMouseEnter() {}
 
@@ -137,6 +140,12 @@ export class Dashboard {
 
   handleUploadStatus(uploadState: UploadState): void {
     this.uploadState = uploadState;
+  }
+
+  toggleOrientation() {
+    if (this.selectedChart === 'bar') {
+      this.horizontal.emit(this.isHorizontal);
+    }
   }
 
   onChartTypeClicked(kind: ChartKind) {

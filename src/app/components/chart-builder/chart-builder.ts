@@ -67,6 +67,7 @@ export class ChartBuilder implements OnChanges {
   @Input() selectedChart!: ChartKind;
   @Input() xColumn?: string;
   @Input() yColumn?: string;
+  @Input() horizontal = false;
   @Output() targetChange = new EventEmitter<Target>();
 
   buildAndEmitTarget() {
@@ -163,7 +164,7 @@ export class ChartBuilder implements OnChanges {
             ok: true,
             target: {
               type: 'bar',
-              indexAxis: state.indexAxis ?? 'x',
+              indexAxis: this.horizontal ? 'y' : 'x',
               ...base,
             },
           };
@@ -192,7 +193,8 @@ export class ChartBuilder implements OnChanges {
             ok: true,
             target: {
               type: 'bar',
-              indexAxis: state.indexAxis ?? 'x',
+              // indexAxis: state.indexAxis ?? 'x',
+              indexAxis: this.horizontal ? 'y' : 'x',
               ...base,
             },
           };
