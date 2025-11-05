@@ -143,9 +143,7 @@ export class Dashboard {
   }
 
   toggleOrientation() {
-    if (this.selectedChart === 'bar') {
-      this.horizontal.emit(this.isHorizontal);
-    }
+    this.horizontal.emit(this.isHorizontal);
   }
 
   onChartTypeClicked(kind: ChartKind) {
