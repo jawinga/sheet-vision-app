@@ -11,11 +11,23 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
 	•	 Future-ready for AI-powered insights
 
  Tech Stack
-	•	Frontend: Angular 17, TypeScript, SCSS
+	•	Frontend: Angular 20, TypeScript, SCSS
 	•	Charts: Chart.js
 	•	Build Tools: Vite, pnpm
 	•	Design: Tailwind-inspired UI principles
 
  Live Demo
+ 
+<table>
+  <tr>
+    <td><img src="/public/screenshots/screenshot1" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="/public/screenshots/screenshot2" width="100%"><br><sub>Dashboard View</sub></td>
+  </tr>
+  <tr>
+    <td><img src="/public/screenshots/screenshot3" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="/public/screenshots/screenshot4" width="100%"><br><sub>Dashboard View</sub></td>
+  </tr>
+</table>
 
- [sheetvision.vercel.app](https://sheet-vision-app-git-main-cristians-projects-399d0222.vercel.app/)
+https://sheet-vision-app.vercel.app/
+
