@@ -44,10 +44,14 @@ export interface TargetBar extends TargetCartesianBase {
 
 export interface TargetLine extends TargetCartesianBase {
   type: 'line';
+  tension?: number;
+  fill?: boolean;
 }
 
 export interface TargetArea extends TargetCartesianBase {
   type: 'area';
+  tension?: number;
+
   readonly fill: true;
 }
 
@@ -232,6 +236,10 @@ export class Adapter {
             data: target.data.map((row) => Number(row[yKey])),
             borderColor: color,
             backgroundColor: color,
+            tension:
+              target.type === 'line' || target.type === 'area'
+                ? target.tension ?? 0.3
+                : 0,
             ...(target.type === 'area' ? { fill: true } : {}),
           };
         }

@@ -69,6 +69,7 @@ export class ChartBuilder implements OnChanges {
   @Input() yColumn?: string;
   @Input() horizontal = false;
   @Output() targetChange = new EventEmitter<Target>();
+  tension: number = 0.3;
 
   buildAndEmitTarget() {
     console.log('Building with:', {
@@ -174,6 +175,8 @@ export class ChartBuilder implements OnChanges {
             ok: true,
             target: {
               type: 'line',
+              tension: this.tension,
+              fill: true,
               ...base,
             },
           };
