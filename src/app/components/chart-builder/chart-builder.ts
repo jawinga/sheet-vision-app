@@ -12,8 +12,8 @@ import {
   TargetDoughnut,
 } from '../../shared/adapters/chart/adapter';
 import { palette } from '../../shared/constants/palette';
-import { isStringLikeNumber } from '../../shared/helpers/cell-helpers';
 import { isColumnNumericish } from '../../shared/helpers/row-helpers';
+import { redPalette } from '../../shared/constants/palette';
 
 type BuildOk = { ok: true; target: Target };
 type BuildErr = { ok: false; error: string };

@@ -9,7 +9,12 @@ import {
   type ChartType,
   type DefaultDataPoint,
 } from 'chart.js';
-import { palette as defaultPalette } from '../../constants/palette';
+import {
+  palette as defaultPalette,
+  redPalette,
+  pointPalette,
+  doughnutPalette,
+} from '../../constants/palette';
 
 export type ChartKind = 'bar' | 'doughnut' | 'line' | 'area';
 
@@ -33,6 +38,11 @@ export interface TargetBase {
 interface TargetCartesianBase extends TargetBase {
   xKey: string;
   yKeys: string[];
+  tension?: number;
+  fill?: boolean;
+  pointBackgroundColor?: string;
+  borderWidth?: number;
+  radius?: number;
 }
 
 export interface TargetBar extends TargetCartesianBase {
@@ -40,18 +50,16 @@ export interface TargetBar extends TargetCartesianBase {
   xKey: string;
   yKeys: [string] | string[];
   indexAxis?: 'x' | 'y';
+  backgroundColor?: [];
 }
 
 export interface TargetLine extends TargetCartesianBase {
   type: 'line';
-  tension?: number;
-  fill?: boolean;
 }
 
 export interface TargetArea extends TargetCartesianBase {
   type: 'area';
   tension?: number;
-
   readonly fill: true;
 }
 
@@ -59,6 +67,9 @@ export interface TargetDoughnut extends TargetBase {
   type: 'doughnut';
   labelKey: string;
   valueKey: string;
+  backgroundColor?: [];
+  cutout?: string;
+  radius?: string;
 }
 
 export type Target = TargetBar | TargetDoughnut | TargetLine | TargetArea;
@@ -158,7 +169,6 @@ export class Adapter {
 
     const labels = target.data.map((row) => String(row[target.labelKey]));
     const values = target.data.map((row) => Number(row[target.valueKey]));
-    const colors = target.colorPalette;
 
     const shaped: ChartConfig<'doughnut', number[], string> = {
       type: 'doughnut',
@@ -167,8 +177,9 @@ export class Adapter {
         datasets: [
           {
             data: values,
-            backgroundColor: colors,
-          },
+            backgroundColor: doughnutPalette,
+            radius: '85%',
+          } as any,
         ],
       },
       options: {
@@ -231,11 +242,24 @@ export class Adapter {
       const datasets: ChartDataset<'line', number[]>[] = target.yKeys.map(
         (yKey, i) => {
           const color = colors[i % colors.length];
+          const colorDots = pointPalette[i % pointPalette.length];
           return {
             label: yKey,
             data: target.data.map((row) => Number(row[yKey])),
             borderColor: color,
             backgroundColor: color,
+            pointRadius:
+              target.type === 'line' || target.type === 'area'
+                ? target.borderWidth ?? 6
+                : 3,
+            borderWidth:
+              target.type === 'line' || target.type === 'area'
+                ? target.borderWidth ?? 3
+                : 0,
+            pointBackgroundColor:
+              target.type === 'line' || target.type === 'area'
+                ? target.pointBackgroundColor ?? colorDots
+                : '',
             tension:
               target.type === 'line' || target.type === 'area'
                 ? target.tension ?? 0.3
@@ -263,11 +287,13 @@ export class Adapter {
 
     const barDatasets: ChartDataset<'bar', number[]>[] = target.yKeys.map(
       (yKey, i) => {
-        const color = colors[i % colors.length];
+        const barColors = target.data.map(
+          (_, index) => redPalette[index % redPalette.length]
+        );
         return {
           label: yKey,
           data: target.data.map((row) => Number(row[yKey])),
-          backgroundColor: color,
+          backgroundColor: barColors,
         };
       }
     );

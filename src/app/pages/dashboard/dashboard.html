@@ -41,7 +41,13 @@
       margin-top: 3rem;
     "
   >
+    @if (selectedChart === 'doughnut') {
+    <p>Select Category</p>
+
+    }@else {
     <p>Select Category Column (X-Axis)</p>
+
+    }
     <app-tool-tip
       [text]="'Show values horizontally: cities, names, dates...'"
     ></app-tool-tip>
@@ -62,7 +68,13 @@
   <div
     style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem"
   >
+    @if (selectedChart === 'doughnut') {
+    <p>Select Value</p>
+
+    }@else {
     <p>Select Value Column (Y-Axis)</p>
+
+    }
     <app-tool-tip
       [text]="'Show numeric values verticaly: sales, age, count...'"
     ></app-tool-tip>
