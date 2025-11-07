@@ -16,6 +16,12 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
 	•	Build Tools: Vite, pnpm
 	•	Design: Tailwind-inspired UI principles
 
+  Next steps
+  •	Integrate Anthropic API through Spring Boot
+	•	Hybrid parsing: frontend preview and in-depth APACHE POI parsing
+	•	Sanitise/normalise cells and return new file
+  
+
  Live Demo
  https://sheet-vision-app.vercel.app/
  
