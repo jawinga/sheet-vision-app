@@ -38,6 +38,9 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
     <td><img src="./public/screenshots/screenshot5.png" width="100%"><br><sub>Dashboard View</sub></td>
     <td><img src="./public/screenshots/screenshot6.png" width="100%"><br><sub>Dashboard View</sub></td>
   </tr>
+  <tr>
+    <td><img src="./public/screenshots/screenshot7.png" width="100%"><br><sub>Dashboard View</sub></td>
+  </tr>
 </table>
 
 https://sheet-vision-app.vercel.app/
