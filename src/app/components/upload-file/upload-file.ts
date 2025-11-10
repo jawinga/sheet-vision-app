@@ -44,6 +44,8 @@ export class UploadFile {
   @Output() columnsChange = new EventEmitter<string[]>();
   @Output() rowsChange = new EventEmitter<Array<Record<string, unknown>>>();
   @Output() uploadStatusChange = new EventEmitter<UploadStatus>();
+  @Output() parseResultChange = new EventEmitter<ParseResult>();
+  @Output() fileName = new EventEmitter<string>();
 
   sheetName: string = '';
   sheetNames: string[] = [];
@@ -169,7 +171,10 @@ export class UploadFile {
       return name;
     }
 
-    return name.substring(0, lastDotIndex);
+    const finalName = name.substring(0, lastDotIndex);
+    this.fileName.emit(finalName);
+
+    return finalName;
   }
 
   getFileTypeWithoutName(file: File): string {
@@ -209,6 +214,7 @@ export class UploadFile {
         this.startUpload(file);
         this.columnsChange.emit(this.columns);
         this.rowsChange.emit(this.rows);
+        this.parseResultChange.emit(result);
       })
       .catch((err) => {
         this.parseState = 'parseError';

@@ -7,9 +7,10 @@ import {
   Trash2,
   CloudUpload,
   Download,
+  BrainCircuit,
 } from 'lucide-angular';
 
-type IconVariant = 'plus' | 'trash' | 'upload' | 'download';
+type IconVariant = 'plus' | 'trash' | 'upload' | 'download' | 'ai';
 type ColorVariant = 'accent' | 'accent-hover';
 
 @Component({
@@ -29,6 +30,7 @@ export class Cta {
     trash: Trash2,
     upload: CloudUpload,
     download: Download,
+    ai: BrainCircuit,
   };
   get iconImg() {
     return this.icon ? this.IconMap[this.icon] : undefined;

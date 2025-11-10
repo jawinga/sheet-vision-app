@@ -1,4 +1,11 @@
-import { Component, HostListener, Output } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Output,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  EventEmitter,
+} from '@angular/core';
 import { UploadFile } from '../../components/upload-file/upload-file';
 import { ChartType } from '../../components/chart-type/chart-type';
 import { LucideAngularModule, Sparkles, Info } from 'lucide-angular';
@@ -10,8 +17,8 @@ import { ChooseColumn } from '../../components/choose-column/choose-column';
 import { isColumnNumericish } from '../../shared/helpers/row-helpers';
 import { FormsModule } from '@angular/forms';
 import { ToolTip } from '../../components/tool-tip/tool-tip';
-import { EventEmitter } from '@angular/core';
 import _ from 'lodash';
+import { ParseResult } from '../../services/excel-parser/excel-parser-service';
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error';
 
@@ -31,6 +38,7 @@ type UploadState = 'idle' | 'uploading' | 'success' | 'error';
   standalone: true,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard {
   chartVariants = [
@@ -41,6 +49,8 @@ export class Dashboard {
   ] as const;
 
   aggregationType: 'sum' | 'avg' | 'count' = 'avg';
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   readonly Sparkles = Sparkles;
   readonly Info = Info;
@@ -55,6 +65,9 @@ export class Dashboard {
   processedRows: Array<Record<string, unknown>> = [];
   uploadState!: UploadState;
   isHorizontal = false;
+  parseResult: ParseResult | null = null;
+  fileName: string = '';
+
   @Output() horizontal = new EventEmitter<boolean>();
 
   @HostListener('mouseover') onMouseEnter() {}
@@ -130,6 +143,7 @@ export class Dashboard {
   handleRowsChange(rows: Array<Record<string, unknown>>) {
     this.rows = rows;
     this.updateChartData();
+    this.cdr.markForCheck();
   }
 
   handleTargetChange(target: Target) {
@@ -140,6 +154,26 @@ export class Dashboard {
 
   handleUploadStatus(uploadState: UploadState): void {
     this.uploadState = uploadState;
+  }
+
+  handleParseResult(parseResult: ParseResult) {
+    console.log('handleParseResult called:', parseResult);
+    this.parseResult = parseResult;
+    this.columns = parseResult.columns;
+    this.rows = parseResult.rows;
+    this.cdr.markForCheck();
+
+    console.log(
+      'hasData should be:',
+      this.columns?.length > 0 && this.rows?.length > 0
+    );
+    console.log('columns:', this.columns);
+    console.log('rows:', this.rows?.length);
+  }
+
+  handleFileName(fileName: string) {
+    this.fileName = fileName;
+    this.cdr.markForCheck();
   }
 
   toggleOrientation() {

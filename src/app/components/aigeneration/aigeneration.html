@@ -3,7 +3,44 @@
   <p class="not-generated">
     AI Insights will appear here after processing your data
   </p>
-  } @if (generated) { } @if (generating){
+  } @if (generated && !generating && !trends && !recommendations && !anomalies)
+  {
+
+  <app-cta
+    label="Get AI Insights"
+    icon="ai"
+    (click)="onGetInsights()"
+  ></app-cta>
+
+  } @if (generating){
+  <p>This could take 10-20 seconds</p>
   <app-loading-animation></app-loading-animation>
+  } @if (trends) {
+
+  <div class="insights">
+    <div class="trendSection">
+      <h3>Trends</h3>
+      <p>{{ trends }}</p>
+    </div>
+
+    <div class="anomaliesSection">
+      <h3>Anomalies</h3>
+      <ul>
+        @for (anomaly of anomalies; track anomaly) {
+        <li>{{ anomaly }}</li>
+        }
+      </ul>
+    </div>
+
+    <div class="recommendationsSection">
+      <h3>Recommendations</h3>
+      <p>{{ recommendations }}</p>
+    </div>
+  </div>
+
+  } @if (error) {
+  <div class="error">
+    <p>Error: {{ error }}</p>
+  </div>
   }
 </div>
