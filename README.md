@@ -22,19 +22,18 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
 
  <h2>How to use - Quick Start</h2>
 
-Frontend
+<h3>Frontend</h3>
+<p>git clone https://github.com/jawinga/sheet-vision-app.git</p>
+<p>cd sheet-vision-app</p>
+<p>npm install</p>
+<p>ng serve</p>
 
-git clone https://github.com/jawinga/sheet-vision-app.git
-cd sheet-vision-app
-npm install
-ng serve
+<h3>Backend</h3>
 
-Backend
-
-git clone https://github.com/jawinga/sheetvision.api.git
-cd sheetvision.api
-export ANTHROPIC_API_KEY=your_key_here
-mvn spring-boot:run
+<p>git clone https://github.com/jawinga/sheetvision.api.git</p>
+<p>cd sheetvision.api</p>
+<p>export ANTHROPIC_API_KEY=your_key_here</p>
+<p>mvn spring-boot:run</p>
   
   
   <h2>Next steps</h2>
