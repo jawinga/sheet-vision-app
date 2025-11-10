@@ -4,6 +4,7 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { ParseResult } from '../../services/excel-parser/excel-parser-service';
 import { LoadingAnimation } from '../loading-animation/loading-animation';
@@ -21,7 +22,10 @@ import { Cta } from '../cta/cta';
   styleUrl: './aigeneration.scss',
 })
 export class AIGeneration implements OnInit, OnChanges {
-  constructor(private insightsService: InsightsService) {}
+  constructor(
+    private insightsService: InsightsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   request: InsightsRequestDTO | null = null;
   generated: boolean = false;
@@ -78,14 +82,17 @@ export class AIGeneration implements OnInit, OnChanges {
           this.trends = response.trends;
           this.anomalies = response.anomalies;
           this.recommendations = response.recommendations;
+          this.cdr.detectChanges();
         } else {
           this.error = response.error;
         }
         this.generating = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = 'Failed to generate AI insights: ' + err.message;
         this.generating = false;
+        this.cdr.detectChanges();
       },
     });
   }
