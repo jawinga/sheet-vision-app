@@ -13,7 +13,7 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
  Tech Stack
 	•	Frontend: Angular 20, TypeScript, SCSS
 	•	Charts: Chart.js
-	•	Build Tools: Vite, pnpm
+	•	Build Tools: Docker, Vite, pnpm
 	•	Design: Tailwind-inspired UI principles
 
   Next steps
@@ -33,6 +33,10 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
   <tr>
     <td><img src="./public/screenshots/screenshot3.png" width="100%"><br><sub>Dashboard View</sub></td>
     <td><img src="./public/screenshots/screenshot4.png" width="100%"><br><sub>Dashboard View</sub></td>
+  </tr>
+  <tr>
+    <td><img src="./public/screenshots/screenshot5.png" width="100%"><br><sub>Dashboard View</sub></td>
+    <td><img src="./public/screenshots/screenshot6.png" width="100%"><br><sub>Dashboard View</sub></td>
   </tr>
 </table>
 
