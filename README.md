@@ -3,26 +3,31 @@ It allows users to upload, parse, and visualize spreadsheet data in dynamic char
 
 ⚠️ Note: Make sure to use numeric columns in your Excel files, as Sheet Vision generates numeric-based charts (Bar, Line, Area, Doughnut).
 
- Features
-	•	 Upload .xlsx or .xls files
-	•	 Automatic header and data detection
-	•	 Generate charts dynamically (Bar, Line, Area, Doughnut)
-	•	 Data normalization & aggregation
-	•	 Future-ready for AI-powered insights
+ <h2>Features</h2>
+ <ul>
+   <li>Upload Excel files (.xlsx, .xls)</li>
+   <li>Create interactive charts (Bar, Line, Area, Doughnut)</li>
+   <li>Get AI insights - trends, anomalies, recommendations</li>
+   <li>Data aggregation (Sum, Average, Count)</li>
+   <li>Responsive design</li>
+   
+ </ul>
 
- Tech Stack
-	•	Frontend: Angular 20, TypeScript, SCSS
-	•	Charts: Chart.js
-	•	Build Tools: Docker, Vite, pnpm
-	•	Design: Tailwind-inspired UI principles
-
-  Next steps
-  •	Integrate Anthropic API through Spring Boot
-	•	Hybrid parsing: frontend preview and in-depth APACHE POI parsing
-	•	Sanitise/normalise cells and return new file
+ <h2>Tech Stack</h2>
+ <ul>
+    <li>Frontend: Angular 20, TypeScript, SCSS, Chart.js</li>
+    <li>Backend: Spring Boot, Java, Docker, Anthropic Claude API, SheetJS</li>
+    <li>Deployment: Vercel (frontend), Railway (backend)</li>
+ </ul>
+	
   
-
- Live Demo
+  <h2>Next steps</h2>
+  <ul>
+    <li>Hybrid parsing: frontend preview and in-depth APACHE POI parsing</li>
+    <li>Sanitise/normalise cells and return new file</li>
+  </ul>
+  
+ <h2>Live Demo</h2>
  https://sheet-vision-app.vercel.app/
  
 <table>
