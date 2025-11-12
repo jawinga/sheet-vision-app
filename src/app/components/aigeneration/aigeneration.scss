@@ -7,7 +7,7 @@
 
 div {
   box-sizing: border-box;
-  padding: 5rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,24 +16,42 @@ div {
   background-color: $color-bg-card;
   width: 90%;
   margin: 0 auto;
+
+  @media (min-width: 640px) {
+    padding: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 5rem;
+  }
 }
 
 .not-generated {
-  font-size: 1rem;
+  font-size: 0.875rem;
   color: $color-text-muted;
   margin-top: 1rem;
   text-align: center;
+
+  @media (min-width: 640px) {
+    font-size: 1rem;
+  }
 }
 
 .insights {
   border: none;
+  width: 100%;
   max-width: 64rem;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: start;
-  gap: 2rem;
+  gap: 1.5rem;
+
+  @media (min-width: 640px) {
+    padding: 1.5rem;
+    gap: 2rem;
+  }
 
   .trendSection,
   .recommendationsSection,
@@ -41,22 +59,35 @@ div {
     border: none;
     align-items: start;
     padding: 0;
+    width: 100%;
   }
+
   h3 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--foreground);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    width: 100%;
+
+    @media (min-width: 640px) {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
 
     &::before {
       content: "";
       width: 0.25rem;
-      height: 2rem;
+      height: 1.5rem;
       background-color: #dc2626;
       border-radius: 9999px;
+      flex-shrink: 0;
+
+      @media (min-width: 640px) {
+        height: 2rem;
+      }
     }
   }
 
@@ -65,15 +96,24 @@ div {
     p {
       color: var(--muted-foreground);
       line-height: 1.6;
-      font-size: 1rem;
+      font-size: 0.875rem;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
       border-radius: 0.5rem;
-      padding: 1.5rem;
+      padding: 1rem;
+      width: 100%;
+      word-break: break-word;
+
+      @media (min-width: 640px) {
+        font-size: 1rem;
+        padding: 1.5rem;
+      }
     }
   }
 
   .anomaliesSection {
+    width: 100%;
+
     ul {
       list-style: none;
       padding: 0;
@@ -81,17 +121,25 @@ div {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
+      width: 100%;
 
       li {
         color: var(--muted-foreground);
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid var(--border);
         border-radius: 0.5rem;
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 1rem;
         display: flex;
         align-items: flex-start;
         gap: 0.75rem;
         transition: border-color 0.2s ease;
+        word-break: break-word;
+        font-size: 0.875rem;
+
+        @media (min-width: 640px) {
+          padding: 1rem 1.5rem;
+          font-size: 1rem;
+        }
 
         &:hover {
           border-color: rgba(220, 38, 38, 0.5);
