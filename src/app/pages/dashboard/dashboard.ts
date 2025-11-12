@@ -97,7 +97,14 @@ export class Dashboard {
   }
 
   aggregateData(): Array<Record<string, unknown>> {
+    console.log('aggregateData called', {
+      xColumn: this.selectedXColumn,
+      yColumn: this.selectedYColumn,
+      aggregationType: this.aggregationType,
+    });
+
     const grouped = _.groupBy(this.rows, this.selectedXColumn);
+    console.log('Grouped:', grouped);
 
     const aggregated = _.map(grouped, (groupRows, xValue) => {
       return {
@@ -110,6 +117,7 @@ export class Dashboard {
       };
     });
 
+    console.log('Aggregated:', aggregated);
     return aggregated;
   }
 
@@ -119,6 +127,12 @@ export class Dashboard {
   }
 
   private updateChartData() {
+    console.log('updateChartData called', {
+      groupDuplicates: this.groupDuplicates,
+      columnsLength: this.columns?.length,
+      rowsLength: this.rows?.length,
+    });
+
     if (!this.columns?.length || !this.rows?.length) {
       this.processedColumns = [];
       this.processedRows = [];
@@ -126,13 +140,20 @@ export class Dashboard {
     }
 
     if (!this.groupDuplicates) {
+      console.log('NOT grouping - using raw data');
       this.processedColumns = this.columns;
       this.processedRows = this.rows;
       return;
     }
 
+    console.log('GROUPING - aggregating data');
     this.processedColumns = [this.selectedXColumn, this.selectedYColumn];
     this.processedRows = this.aggregateData();
+
+    console.log('Aggregated result:', {
+      columns: this.processedColumns,
+      rows: this.processedRows,
+    });
   }
   handleYColumnSelected(columnName: string) {
     this.selectedYColumn = columnName;
@@ -219,7 +240,20 @@ export class Dashboard {
   }
 
   onGroupDuplicatesChange() {
+    if (!this.selectedXColumn && this.columns?.length > 0) {
+      this.selectedXColumn = this.columns[0];
+    }
+
+    if (!this.selectedYColumn && this.numericColumns?.length > 0) {
+      this.selectedYColumn = this.numericColumns[0];
+    }
+
+    console.log('onGroupDuplicatesChange called');
+    console.log('groupDuplicates:', this.groupDuplicates);
+    console.log('selectedXColumn:', this.selectedXColumn);
+    console.log('selectedYColumn:', this.selectedYColumn);
     this.updateChartData();
+    this.cdr.markForCheck();
   }
 
   onAggregationTypeChange() {
