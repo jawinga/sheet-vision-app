@@ -178,7 +178,7 @@ export class Adapter {
           {
             data: values,
             backgroundColor: doughnutPalette,
-            radius: '85%',
+            radius: '70%',
           } as any,
         ],
       },
