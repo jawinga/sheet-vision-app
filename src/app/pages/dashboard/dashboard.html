@@ -10,15 +10,29 @@
   </div>
 
   <app-upload-file
+    #uploadFileComponent
     (columnsChange)="handleColumnsChange($event)"
     (rowsChange)="handleRowsChange($event)"
     (uploadStatusChange)="handleUploadStatus($event)"
     (uploadStatusChange)="handleUploadStatus($event)"
     (parseResultChange)="handleParseResult($event)"
     (fileName)="handleFileName($event)"
+    (sheetNamesChange)="handleSheetNamesChange($event)"
   ></app-upload-file>
 
-  @if (hasData && uploadState === 'success') {
+  @if (hasData && uploadState === 'success') { @if (sheetNames.length > 1) {
+  <div class="sheet-options">
+    @for (name of sheetNames; track name; let i = $index) {
+    <app-sheet-button
+      [number]="i"
+      [label]="name"
+      [selected]="name === selectedSheetName"
+      (select)="onSelectedSheet(name)"
+    >
+    </app-sheet-button>
+    }
+  </div>
+  }
 
   <h3 class="chart-pick-title">Choose your Chart Style</h3>
 
@@ -173,7 +187,11 @@
   ></app-chart-builder>
 
   @if (hasData && hasTarget && hasSelectedChart) {
-  <app-chart [target]="target"></app-chart>
+  <app-chart
+    [target]="target"
+    [parseResult]="parseResult"
+    [resetTrigger]="chartResetTrigger"
+  ></app-chart>
 
   } @if (hasData) {
   <h3 class="ai-title">

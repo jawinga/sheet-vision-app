@@ -51,6 +51,29 @@ export class ExcelParserService {
     private headerComposer: HeaderComposer
   ) {}
 
+  private cleanRowData(
+    rows: Array<Record<string, CellValue>>
+  ): Array<Record<string, CellValue>> {
+    return rows.map((row) => {
+      const cleaned: Record<string, CellValue> = {};
+      for (const key in row) {
+        const value = row[key];
+
+        if (
+          value === 'N/A' ||
+          value === null ||
+          value === undefined ||
+          value === ''
+        ) {
+          cleaned[key] = null;
+        } else {
+          cleaned[key] = value;
+        }
+      }
+      return cleaned;
+    });
+  }
+
   async parseExcel(file: File, opts: ParseOptions = {}): Promise<ParseResult> {
     const buf = await file.arrayBuffer();
     const wb = XLSX.read(buf, { type: 'array', cellDates: true });
@@ -120,14 +143,19 @@ export class ExcelParserService {
 
     const sampleLimit = opts.sampleLimit ?? 10;
 
+    // ← CLEAN THE ROWS HERE
+    const cleanedRows = this.cleanRowData(rows);
+    const cleanedSampleRows = this.cleanRowData(rows.slice(0, sampleLimit));
+
     const warnings = [...localWarnings, ...detectWarnings, ...composeWarnings];
+
     return {
       sheetName,
       sheetNames,
       columns: headers,
-      rowCount: rows.length,
-      rows,
-      sampleRows: rows.slice(0, sampleLimit),
+      rowCount: cleanedRows.length,
+      rows: cleanedRows,
+      sampleRows: cleanedSampleRows,
       mergeRanges: mergeRangesOriginal,
       headerRows,
       startRow,

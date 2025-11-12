@@ -46,6 +46,8 @@ export class UploadFile {
   @Output() uploadStatusChange = new EventEmitter<UploadStatus>();
   @Output() parseResultChange = new EventEmitter<ParseResult>();
   @Output() fileName = new EventEmitter<string>();
+  @Output() sheetNamesChange = new EventEmitter<string[]>();
+  @Output() selectedSheetNameChange = new EventEmitter<string>();
 
   sheetName: string = '';
   sheetNames: string[] = [];
@@ -71,6 +73,7 @@ export class UploadFile {
     if (!this.lastFile) return;
     this.parseState = 'parseLoading';
     this.selectedSheetName = name;
+    this.selectedSheetNameChange.emit(name);
     this.startParse(this.lastFile, { sheetName: name });
   }
 
@@ -215,6 +218,7 @@ export class UploadFile {
         this.columnsChange.emit(this.columns);
         this.rowsChange.emit(this.rows);
         this.parseResultChange.emit(result);
+        this.sheetNamesChange.emit(result.sheetNames);
       })
       .catch((err) => {
         this.parseState = 'parseError';

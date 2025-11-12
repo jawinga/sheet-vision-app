@@ -30,16 +30,12 @@
   <tbody>
     @for (row of sampleRows; track $index) {
     <tr>
-      <!-- First column: merge with rowspan -->
       @if (bodyMergeKey) { @let meta = bodyMergeMeta[$index]; @if
       (!meta?.hidden) {
       <td [attr.rowspan]="meta?.rowspan ?? 1">
         {{ row[bodyMergeKey] }}
       </td>
-      } }
-
-      <!-- Other columns (skip the merged one) -->
-      @for (col of columns; track $index) { @if (col !== bodyMergeKey) {
+      } } @for (col of columns; track $index) { @if (col !== bodyMergeKey) {
       <td>{{ row[col] }}</td>
       } }
     </tr>

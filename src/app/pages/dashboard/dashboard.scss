@@ -314,3 +314,19 @@ h3 {
 .chart-pick-title {
   margin-top: 4rem;
 }
+
+.sheet-options {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-direction: row;
+  border: 0;
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+  padding: 0 1.5rem;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}

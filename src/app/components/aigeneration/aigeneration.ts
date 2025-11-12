@@ -46,6 +46,16 @@ export class AIGeneration implements OnInit, OnChanges {
       fileName: this.fileName,
     });
 
+    if (changes['parseResult']) {
+      console.log('Sheet changed, resetting AI');
+      this.generated = false;
+      this.trends = null;
+      this.anomalies = null;
+      this.recommendations = null;
+      this.generating = false;
+      this.error = null;
+    }
+
     if (this.parseResult && this.fileName) {
       console.log('Building request...');
       this.request = {

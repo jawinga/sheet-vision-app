@@ -5,6 +5,7 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   EventEmitter,
+  ViewChild,
 } from '@angular/core';
 import { UploadFile } from '../../components/upload-file/upload-file';
 import { ChartType } from '../../components/chart-type/chart-type';
@@ -19,6 +20,7 @@ import { FormsModule } from '@angular/forms';
 import { ToolTip } from '../../components/tool-tip/tool-tip';
 import _ from 'lodash';
 import { ParseResult } from '../../services/excel-parser/excel-parser-service';
+import { SheetButton } from '../../components/sheet-button/sheet-button';
 
 type UploadState = 'idle' | 'uploading' | 'success' | 'error';
 
@@ -34,6 +36,7 @@ type UploadState = 'idle' | 'uploading' | 'success' | 'error';
     ChooseColumn,
     FormsModule,
     ToolTip,
+    SheetButton,
   ],
   standalone: true,
   templateUrl: './dashboard.html',
@@ -67,6 +70,11 @@ export class Dashboard {
   isHorizontal = false;
   parseResult: ParseResult | null = null;
   fileName: string = '';
+  sheetNames: string[] = [];
+  selectedSheetName: string = '';
+  chartResetTrigger: number = 0;
+
+  @ViewChild('uploadFileComponent') uploadFileComponent!: UploadFile;
 
   @Output() horizontal = new EventEmitter<boolean>();
 
@@ -107,7 +115,7 @@ export class Dashboard {
 
   handleXColumnSelected(columnName: string) {
     this.selectedXColumn = columnName;
-    this.updateChartData(); // Recalculate once
+    this.updateChartData();
   }
 
   private updateChartData() {
@@ -173,6 +181,32 @@ export class Dashboard {
 
   handleFileName(fileName: string) {
     this.fileName = fileName;
+    this.cdr.markForCheck();
+  }
+
+  handleSheetNamesChange(sheetNames: string[]) {
+    this.sheetNames = sheetNames;
+    this.cdr.markForCheck();
+  }
+
+  onSelectedSheet(sheetName: string) {
+    this.selectedSheetName = sheetName;
+    this.chartResetTrigger++;
+
+    this.selectedXColumn = '';
+    this.selectedYColumn = '';
+
+    this.uploadFileComponent?.onSelectSheet(sheetName);
+
+    setTimeout(() => {
+      if (this.columns?.length > 0) {
+        this.selectedXColumn = this.columns[0];
+        if (this.numericColumns?.length > 0) {
+          this.selectedYColumn = this.numericColumns[0];
+        }
+      }
+    }, 100);
+
     this.cdr.markForCheck();
   }
 

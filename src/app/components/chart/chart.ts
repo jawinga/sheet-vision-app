@@ -12,6 +12,7 @@ import type { Chart as ChartJS, ChartConfiguration } from 'chart.js';
 import { Target } from '../../shared/adapters/chart/adapter';
 import { Adapter } from '../../shared/adapters/chart/adapter';
 import { Cta } from '../cta/cta';
+import { ParseResult } from '../../services/excel-parser/excel-parser-service';
 
 @Component({
   selector: 'app-chart',
@@ -28,6 +29,8 @@ export class Chart implements AfterViewInit, OnChanges, OnDestroy {
 
   @ViewChild('chart') chartElement!: ElementRef<HTMLCanvasElement>;
   @Input() target!: Target;
+  @Input() parseResult: ParseResult | null = null; // ← ADD THIS
+  @Input() resetTrigger: number = 0; // ← ADD THIS
 
   async ngAfterViewInit(): Promise<void> {
     // Lazy import Chart.js only when the view exists
@@ -77,8 +80,19 @@ export class Chart implements AfterViewInit, OnChanges, OnDestroy {
     if (this.target) this.renderChart();
   }
 
-  ngOnChanges(_: SimpleChanges): void {
-    if (this.chartReady) this.renderChart();
+  ngOnChanges(changes: SimpleChanges): void {
+    // Detect when resetTrigger changes (sheet switched)
+    if (changes['resetTrigger']) {
+      this.destroyChart(); // Force destroy and recreate
+    }
+
+    // Re-render when target or parseResult changes
+    if (
+      this.chartReady &&
+      (changes['target'] || changes['parseResult'] || changes['resetTrigger'])
+    ) {
+      this.renderChart();
+    }
   }
 
   ngOnDestroy(): void {

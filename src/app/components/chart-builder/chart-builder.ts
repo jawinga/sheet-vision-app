@@ -80,9 +80,25 @@ export class ChartBuilder implements OnChanges {
       rowCount: this.rows.length,
     });
 
+    const validRows = this.rows.filter((row) => {
+      if (
+        this.xColumn &&
+        (row[this.xColumn] === null || row[this.xColumn] === undefined)
+      ) {
+        return false;
+      }
+      if (
+        this.yColumn &&
+        (row[this.yColumn] === null || row[this.yColumn] === undefined)
+      ) {
+        return false;
+      }
+      return true;
+    });
+
     const state: BuilderState = {
       columns: this.columns,
-      rows: this.rows,
+      rows: validRows,
       xKey: this.xColumn,
       yKeys: this.yColumn ? [this.yColumn] : undefined,
     };
